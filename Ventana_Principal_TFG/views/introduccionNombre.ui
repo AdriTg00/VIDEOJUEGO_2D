@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>introduccionNombre</class>
+ <widget class="QWidget" name="introduccionNombre">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>377</width>
+    <height>187</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background-color: #faf0d6;
+</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="1" column="2">
+    <widget class="QLineEdit" name="nombre">
+     <property name="maximumSize">
+      <size>
+       <width>300</width>
+       <height>40</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLineEdit {
+    background-color: #FFF7D2;            /* fondo beige claro */
+    border: 3px solid #C6A72F;            /* borde dorado */
+    border-radius: 8px;                   /* esquinas suaves */
+    color: #3A2F00;                       /* texto marrón oscuro */
+    font-weight: bold;
+    font-family: &quot;Press Start 2P&quot;, monospace;  /* si tienes fuente pixel */
+    font-size: 8px;
+    padding: 6px 10px;
+    selection-background-color: #F7D24A;  /* color de selección */
+    selection-color: black;
+}
+
+QLineEdit:hover {
+    border-color: #E6C84F;                /* borde más brillante al pasar el ratón */
+    background-color: #FFF4BD;
+}
+
+QLineEdit:focus {
+    border-color: #FFD700;                /* dorado intenso cuando se escribe */
+    background-color: #FFF9E0;
+    box-shadow: 0 0 10px #FFD700;         /* efecto resplandor dorado */
+}
+
+QLineEdit:disabled {
+    background-color: #E0E0E0;
+    color: #888;
+    border-color: #AAA;
+}
+</string>
+     </property>
+     <property name="placeholderText">
+      <string>Introduce el nombre</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Orientation::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="1" column="3">
+    <spacer name="horizontalSpacer_2">
+     <property name="orientation">
+      <enum>Qt::Orientation::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="1" column="1">
+    <widget class="QLabel" name="labelNombre">
+     <property name="maximumSize">
+      <size>
+       <width>150</width>
+       <height>50</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel {
+    color: #3C3C3C;
+    font-size: 11px;
+    font-weight: bold;
+    padding: 6px;
+    letter-spacing: 1px;
+}</string>
+     </property>
+     <property name="text">
+      <string>Introduce tu nombre:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QPushButton" name="iniciarPartida">
+     <property name="maximumSize">
+      <size>
+       <width>300</width>
+       <height>40</height>
+      </size>
+     </property>
+     <property name="layoutDirection">
+      <enum>Qt::LayoutDirection::LeftToRight</enum>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+    background-color: #F7E088;          /* dorado suave */
+    border: 3px solid #C6A72F;          /* borde más oscuro */
+    border-radius: 10px;
+    color: #3A2F00;                     /* texto marrón oscuro */
+    font-weight: bold;
+    font-family: &quot;Press Start 2P&quot;, monospace; /* o una similar pixel */
+    font-size: 12px;
+    padding: 8px 16px;
+    text-transform: uppercase;
+    box-shadow: 0px 3px 0px #9E821F;    /* efecto relieve inferior */
+}
+
+QPushButton:hover {
+    background-color: #FFE87C;          /* brillo al pasar el ratón */
+    border-color: #E6C84F;
+    box-shadow: 0px 3px 0px #C6A72F;
+    transform: translateY(-1px);        /* efecto sutil de elevación */
+}
+
+QPushButton:pressed {
+    background-color: #E6C84F;
+    border-color: #A88C22;
+    color: #2A2000;
+    box-shadow: 0px 1px 0px #8B6F16;
+    transform: translateY(2px);         /* efecto de “clic” */
+}
+
+QPushButton:disabled {
+    background-color: #DDD2A0;
+    border-color: #B5A36A;
+    color: #888;
+    box-shadow: none;
+}
+</string>
+     </property>
+     <property name="inputMethodHints">
+      <set>Qt::InputMethodHint::ImhDate</set>
+     </property>
+     <property name="text">
+      <string>Iniciar partida</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

@@ -9,6 +9,7 @@ from resources import resources_rc
 class launcher(QMainWindow):
     abrir_config_signal = Signal()
     abrir_cargar_signal = Signal()
+    abrir_nueva_signal = Signal()
     idioma_cambiado = Signal(str)
 
     def __init__(self, app_state, parent=None):
@@ -24,11 +25,12 @@ class launcher(QMainWindow):
         self.ui.comboIdioma.setCurrentText(current_lang)
         self.ui.comboIdioma.currentTextChanged.connect(self.cambiar_idioma)
         self.ui.opciones.clicked.connect(self.emitir_abrir_config)
+        self.ui.nuevaPartida.clicked.connect(self.nueva_partida)
 
     # === FUNCIONES ===
     def nueva_partida(self):
         print("Nueva partida iniciada")
-       
+        self.abrir_nueva_signal.emit()
 
     def cargar_datos(self):
         print("Cargar datos de partida")
