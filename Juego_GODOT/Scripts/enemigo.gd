@@ -44,7 +44,7 @@ func _physics_process(delta):
 	if en_persecucion and jugador and not en_pausa_colision and not recibiendo_daño:
 		_perseguir_jugador()
 	else:
-		if not patrullando and not recibiendo_daño and not en_pausa_colision and not en_persecucion:
+		if not patrullando and not recibiendo_daño and not en_pausa_colision:
 			_iniciar_patruya()
 		
 			
@@ -137,11 +137,11 @@ func recibir_dano(cantidad: int = 1):
 	move_and_slide()
 	await anim.animation_finished
 	
-	
+	en_persecucion = true
 	recibiendo_daño = false
 	invulnerable = false
 	
-	en_persecucion = true
+	
 	
 	
 
