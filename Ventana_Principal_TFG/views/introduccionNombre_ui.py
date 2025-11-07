@@ -29,7 +29,12 @@ class Ui_introduccionNombre(object):
         self.gridLayout.setObjectName(u"gridLayout")
         self.nombre = QLineEdit(introduccionNombre)
         self.nombre.setObjectName(u"nombre")
-        self.nombre.setMaximumSize(QSize(300, 40))
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.nombre.sizePolicy().hasHeightForWidth())
+        self.nombre.setSizePolicy(sizePolicy)
+        self.nombre.setMaximumSize(QSize(500, 40))
         self.nombre.setStyleSheet(u"QLineEdit {\n"
 "    background-color: #FFF7D2;            /* fondo beige claro */\n"
 "    border: 3px solid #C6A72F;            /* borde dorado */\n"
@@ -38,7 +43,7 @@ class Ui_introduccionNombre(object):
 "    font-weight: bold;\n"
 "    font-family: \"Press Start 2P\", monospace;  /* si tienes fuente pixel */\n"
 "    font-size: 8px;\n"
-"    padding: 6px 10px;\n"
+"    padding: 0px 10px;\n"
 "    selection-background-color: #F7D24A;  /* color de selecci\u00f3n */\n"
 "    selection-color: black;\n"
 "}\n"
@@ -127,7 +132,7 @@ class Ui_introduccionNombre(object):
 "")
         self.iniciarPartida.setInputMethodHints(Qt.InputMethodHint.ImhDate)
 
-        self.gridLayout.addWidget(self.iniciarPartida, 2, 1, 1, 1)
+        self.gridLayout.addWidget(self.iniciarPartida, 2, 1, 1, 2)
 
 
         self.retranslateUi(introduccionNombre)
