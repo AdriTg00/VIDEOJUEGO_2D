@@ -116,9 +116,8 @@ func _iniciar_patruya():
 	_patrol_loop()
 
 func recibir_dano(cantidad: int = 1):
-	
-	en_persecucion = false
-	patrullando = false
+	recibiendo_daño = true
+
 	if muerto or invulnerable:
 		return
 	vida -= cantidad
@@ -127,7 +126,7 @@ func recibir_dano(cantidad: int = 1):
 	if vida <= 0:
 		_morir()
 		return
-	recibiendo_daño = true
+	
 	invulnerable = true	
 
 	

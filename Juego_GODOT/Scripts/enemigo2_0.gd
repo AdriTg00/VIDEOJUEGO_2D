@@ -117,8 +117,7 @@ func _iniciar_patruya():
 
 func recibir_dano(cantidad: int = 1):
 	recibiendo_daño = true
-	en_persecucion = false
-	patrullando = false
+
 	if muerto or invulnerable:
 		return
 	vida -= cantidad
@@ -140,7 +139,7 @@ func recibir_dano(cantidad: int = 1):
 	move_and_slide()
 	await anim.animation_finished
 	
-	en_persecucion = true
+	
 	recibiendo_daño = false
 	invulnerable = false
 	
