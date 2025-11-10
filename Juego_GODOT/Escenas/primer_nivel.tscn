@@ -442,7 +442,7 @@ position = Vector2(-166, -55)
 position = Vector2(2012, -326)
 
 [node name="Rey" parent="." instance=ExtResource("3_metos")]
-position = Vector2(1928, -322)
+position = Vector2(-159, -43)
 
 [node name="Camera2D" type="Camera2D" parent="Rey"]
 position = Vector2(0, -26.065)

@@ -1,10 +1,36 @@
-[gd_scene load_steps=28 format=3 uid="uid://dg1cka305d3cl"]
+[gd_scene load_steps=36 format=3 uid="uid://dg1cka305d3cl"]
 
 [ext_resource type="Texture2D" uid="uid://chejnfi2es60s" path="res://Personajes/Cerdos/Idle (26x26).png" id="1_kptbh"]
 [ext_resource type="Script" uid="uid://30b48vic42i4" path="res://Scripts/enemigo_bomba.gd" id="1_yp6on"]
 [ext_resource type="PackedScene" uid="uid://dmnen1cs5uwc2" path="res://Escenas/escenas_sueltas/bomba.tscn" id="2_rls4e"]
 [ext_resource type="Texture2D" uid="uid://bq4piql2fmpp" path="res://Personajes/Cerdos/Picking Bomb (26x26).png" id="2_yp6on"]
+[ext_resource type="Texture2D" uid="uid://bog5sjw0e78yv" path="res://Personajes/Cerdos/Dead (34x28).png" id="3_7ggyp"]
+[ext_resource type="Texture2D" uid="uid://c87rwj1fu8rij" path="res://Personajes/Cerdos/Hit (34x28).png" id="3_ngg7p"]
 [ext_resource type="Texture2D" uid="uid://kk8s7fhchu0y" path="res://Personajes/Cerdos/Throwing Boom (26x26).png" id="3_rls4e"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u5a3k"]
+atlas = ExtResource("3_7ggyp")
+region = Rect2(0, 0, 34, 28)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dpjxb"]
+atlas = ExtResource("3_7ggyp")
+region = Rect2(34, 0, 34, 28)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4rbv2"]
+atlas = ExtResource("3_7ggyp")
+region = Rect2(68, 0, 34, 28)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6vf78"]
+atlas = ExtResource("3_7ggyp")
+region = Rect2(102, 0, 34, 28)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_isp0j"]
+atlas = ExtResource("3_ngg7p")
+region = Rect2(0, 0, 34, 28)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ela83"]
+atlas = ExtResource("3_ngg7p")
+region = Rect2(34, 0, 34, 28)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ngg7p"]
 atlas = ExtResource("1_kptbh")
@@ -86,6 +112,34 @@ region = Rect2(104, 0, 26, 26)
 animations = [{
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_u5a3k")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dpjxb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4rbv2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6vf78")
+}],
+"loop": false,
+"name": &"dead",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 2.0,
+"texture": SubResource("AtlasTexture_isp0j")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ela83")
+}],
+"loop": false,
+"name": &"hit",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_ngg7p")
 }, {
 "duration": 1.0,
@@ -161,7 +215,7 @@ animations = [{
 size = Vector2(13, 13)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_rls4e"]
-size = Vector2(328, 84)
+size = Vector2(391, 84)
 
 [node name="enemigo_bomba" type="CharacterBody2D"]
 script = ExtResource("1_yp6on")
@@ -169,7 +223,7 @@ bomba_scene = ExtResource("2_rls4e")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_isp0j")
-animation = &"idle"
+animation = &"dead"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(-2, 5)
@@ -180,7 +234,7 @@ shape = SubResource("RectangleShape2D_ela83")
 [node name="Area2D" type="Area2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
-position = Vector2(-3, -32)
+position = Vector2(-0.5, -32)
 shape = SubResource("RectangleShape2D_rls4e")
 
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

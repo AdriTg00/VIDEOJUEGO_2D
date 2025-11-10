@@ -116,7 +116,7 @@ func _iniciar_patruya():
 	_patrol_loop()
 
 func recibir_dano(cantidad: int = 1):
-	
+	recibiendo_daño = true
 	en_persecucion = false
 	patrullando = false
 	if muerto or invulnerable:
@@ -127,7 +127,7 @@ func recibir_dano(cantidad: int = 1):
 	if vida <= 0:
 		_morir()
 		return
-	recibiendo_daño = true
+	
 	invulnerable = true	
 
 	
@@ -188,6 +188,7 @@ func _morir():
 
 # --- DETECCIÓN ---
 func _on_jugador_entro(cuerpo):
+	
 	if cuerpo.name == "Rey":
 		gruñido.play()
 		jugador = cuerpo
@@ -197,6 +198,8 @@ func _on_jugador_entro(cuerpo):
 
 
 func _on_jugador_salio(cuerpo):
+	if recibiendo_daño:
+		return  # Ignora la salida durante el hit
 	if cuerpo == jugador:
 		jugador = null
 		en_persecucion = false

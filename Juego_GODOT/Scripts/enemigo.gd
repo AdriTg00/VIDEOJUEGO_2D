@@ -197,6 +197,8 @@ func _on_jugador_entro(cuerpo):
 
 
 func _on_jugador_salio(cuerpo):
+	if recibiendo_daño:
+		return  # Ignora la salida durante el hit
 	if cuerpo == jugador:
 		jugador = null
 		en_persecucion = false

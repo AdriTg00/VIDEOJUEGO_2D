@@ -7,7 +7,7 @@ func _ready():
 	anim.play("idle")
 	await get_tree().create_timer(0.5).timeout
 	anim.play("bomb_on")
-	await get_tree().create_timer(1).timeout
+	await get_tree().create_timer(0.5).timeout
 	explotar()
 
 func explotar():
