@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      GODOT_VERSION: 4.2.2
+      GODOT_VERSION: 4.5
       EXPORT_NAME: game.exe
 
     steps:
@@ -26,26 +26,29 @@ jobs:
         working-directory: Juego_GODOT
         run: |
           GODOT_VERSION=${GODOT_VERSION}
-          wget https://github.com/godotengine/godot-builds/releases/download/4.2.2-stable/Godot_v4.2.2-stable_linux.x86_64.zip
-          wget https://github.com/godotengine/godot-builds/releases/download/4.2.2-stable/Godot_v4.2.2-stable_export_templates.tpz
-          unzip Godot_v4.2.2-stable_linux.x86_64.zip -d ~/godot
-          mkdir -p ~/.local/share/godot/export_templates/4.2.2.stable/
-          unzip Godot_v4.2.2-stable_export_templates.tpz
-          mv templates/* ~/.local/share/godot/export_templates/4.2.2.stable/
+          wget https://github.com/godotengine/godot-builds/releases/download/4.5-stable/Godot_v4.5-stable_linux.x86_64.zip
+          wget https://github.com/godotengine/godot-builds/releases/download/4.5-stable/Godot_v4.5-stable_export_templates.tpz
+          unzip Godot_v4.5-stable_linux.x86_64.zip -d ~/godot
+          mkdir -p ~/.local/share/godot/export_templates/4.5.stable/
+          unzip Godot_v4.5-stable_export_templates.tpz
+          mv templates/* ~/.local/share/godot/export_templates/4.5.stable/
+
       - name: Instalar rcedit
         run: |
           wget https://github.com/electron/rcedit/releases/download/v1.1.1/rcedit-x64.exe
           mkdir -p ~/.local/share/godot/
           mv rcedit-x64.exe ~/.local/share/godot/rcedit.exe
+
       - name: Dar permisos
-        run: chmod +x ~/godot/Godot_v4.2.2-stable_linux.x86_64
+        run: chmod +x ~/godot/Godot_v4.5-stable_linux.x86_64
 
       - name: Verificar export templates
         run: |
           echo "Verificando templates instalados:"
-          ls -la ~/.local/share/godot/export_templates/4.2.2.stable/
+          ls -la ~/.local/share/godot/export_templates/4.5.stable/
           echo "Buscando templates de Windows:"
-          find ~/.local/share/godot/export_templates/4.2.2.stable/ -name "*windows*" -o -name "*win*"
+          find ~/.local/share/godot/export_templates/4.5.stable/ -name "*windows*" -o -name "*win*"
+
       - name: Crear carpeta de build
         working-directory: Juego_GODOT
         run: mkdir -p build/windows
@@ -53,10 +56,11 @@ jobs:
       - name: Exportar a Windows (.exe)
         working-directory: Juego_GODOT
         run: |
-          ~/godot/Godot_v4.2.2-stable_linux.x86_64 \
+          ~/godot/Godot_v4.5-stable_linux.x86_64 \
             --headless \
             --verbose \
             --export-release "Windows Desktop" build/windows/${EXPORT_NAME}
+
       - name: Subir artefacto .exe
         uses: actions/upload-artifact@v4
         with:
