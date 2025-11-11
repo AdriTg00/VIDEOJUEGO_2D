@@ -185,6 +185,8 @@ func _morir():
 	anim.play("dead")
 	velocity.x = 0
 	print("El rey ha muerto")
+	var pantalla_muerte = get_tree().root.get_node("Juego/canvas_layer_dead")  # cambia por tu ruta real
+	pantalla_muerte.mostrar_pantalla_muerte()
 # --- ATAQUE ---
 
 func _atacar():

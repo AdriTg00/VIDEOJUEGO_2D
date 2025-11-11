@@ -103,7 +103,7 @@ func _iniciar_lanzamiento():
 		var bomba = bomba_scene.instantiate()
 		get_tree().current_scene.add_child(bomba)
 		bomba.global_position = global_position + Vector2(-15, -5)
-		bomba.apply_impulse(Vector2(-170, -200))
+		bomba.apply_impulse(Vector2(-170, -150))
 		
 
 		lanzando = false

@@ -1,4 +1,4 @@
-[gd_scene load_steps=68 format=3 uid="uid://b0vjtjiqkhxpo"]
+[gd_scene load_steps=69 format=3 uid="uid://b0vjtjiqkhxpo"]
 
 [ext_resource type="PackedScene" uid="uid://bojdsefgg5ctc" path="res://Escenas/escenas_sueltas/escenario1.tscn" id="1_6nong"]
 [ext_resource type="Script" uid="uid://d4caokhdyxue3" path="res://Scripts/primer_nivel.gd" id="1_11vps"]
@@ -12,6 +12,7 @@
 [ext_resource type="PackedScene" uid="uid://dm2ovaj0lxot8" path="res://Escenas/escenas_sueltas/enemigo.tscn" id="9_sosnl"]
 [ext_resource type="PackedScene" uid="uid://cqwbwnihpcogn" path="res://Escenas/escenas_sueltas/pausa.tscn" id="10_h3qja"]
 [ext_resource type="PackedScene" uid="uid://bn8useixraffm" path="res://Escenas/escenas_sueltas/puerta_salida.tscn" id="11_h146j"]
+[ext_resource type="PackedScene" uid="uid://de8ylx7cosmsd" path="res://Escenas/escenas_sueltas/canvas_layer_dead.tscn" id="13_mk6c5"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_n1ln3"]
 atlas = ExtResource("5_gjw6x")
@@ -568,3 +569,5 @@ position = Vector2(1070, -391)
 position = Vector2(1757, -253)
 
 [node name="Pausa" parent="." instance=ExtResource("10_h3qja")]
+
+[node name="canvas_layer_dead" parent="." instance=ExtResource("13_mk6c5")]

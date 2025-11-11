@@ -1,4 +1,4 @@
-[gd_scene load_steps=68 format=3 uid="uid://g6qlkxdk0emo"]
+[gd_scene load_steps=69 format=3 uid="uid://g6qlkxdk0emo"]
 
 [ext_resource type="Script" uid="uid://b8oqvc0fe7eue" path="res://Scripts/canvas_layer.gd" id="1_dhdsw"]
 [ext_resource type="Texture2D" uid="uid://de82kdu623pnf" path="res://Escenarios/Big Diamond Hit (18x14).png" id="2_74atf"]
@@ -12,6 +12,7 @@
 [ext_resource type="PackedScene" uid="uid://dm2ovaj0lxot8" path="res://Escenas/escenas_sueltas/enemigo.tscn" id="10_qvf3y"]
 [ext_resource type="Script" uid="uid://50cdm4gmvq8u" path="res://Scripts/enemigo2_0.gd" id="11_hcc8u"]
 [ext_resource type="PackedScene" uid="uid://dg1cka305d3cl" path="res://Escenas/escenas_sueltas/enemigo2_0.tscn" id="12_hcc8u"]
+[ext_resource type="PackedScene" uid="uid://de8ylx7cosmsd" path="res://Escenas/escenas_sueltas/canvas_layer_dead.tscn" id="13_g6j3w"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_n1ln3"]
 atlas = ExtResource("2_74atf")
@@ -591,3 +592,7 @@ velocidad = 90.0
 
 [node name="enemigo_bomba" parent="enemigos2_0" instance=ExtResource("12_hcc8u")]
 position = Vector2(878, 654)
+
+[node name="canvas_layer_dead" parent="." instance=ExtResource("13_g6j3w")]
+
+[node name="canvas_layer_dead2" parent="." instance=ExtResource("13_g6j3w")]
