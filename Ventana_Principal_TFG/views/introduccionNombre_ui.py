@@ -27,56 +27,6 @@ class Ui_introduccionNombre(object):
 "")
         self.gridLayout = QGridLayout(introduccionNombre)
         self.gridLayout.setObjectName(u"gridLayout")
-        self.nombre = QLineEdit(introduccionNombre)
-        self.nombre.setObjectName(u"nombre")
-        sizePolicy = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.nombre.sizePolicy().hasHeightForWidth())
-        self.nombre.setSizePolicy(sizePolicy)
-        self.nombre.setMaximumSize(QSize(500, 40))
-        self.nombre.setStyleSheet(u"QLineEdit {\n"
-"    background-color: #FFF7D2;            /* fondo beige claro */\n"
-"    border: 3px solid #C6A72F;            /* borde dorado */\n"
-"    border-radius: 8px;                   /* esquinas suaves */\n"
-"    color: #3A2F00;                       /* texto marr\u00f3n oscuro */\n"
-"    font-weight: bold;\n"
-"    font-family: \"Press Start 2P\", monospace;  /* si tienes fuente pixel */\n"
-"    font-size: 8px;\n"
-"    padding: 0px 10px;\n"
-"    selection-background-color: #F7D24A;  /* color de selecci\u00f3n */\n"
-"    selection-color: black;\n"
-"}\n"
-"\n"
-"QLineEdit:hover {\n"
-"    border-color: #E6C84F;                /* borde m\u00e1s brillante al pasar el rat\u00f3n */\n"
-"    background-color: #FFF4BD;\n"
-"}\n"
-"\n"
-"QLineEdit:focus {\n"
-"    border-color: #FFD700;                /* dorado intenso cuando se escribe */\n"
-"    background-color: #FFF9E0;\n"
-"    box-shadow: 0 0 10px #FFD700;         /* efecto resplandor dorado */\n"
-"}\n"
-"\n"
-"QLineEdit:disabled {\n"
-"    background-color: #E0E0"
-                        "E0;\n"
-"    color: #888;\n"
-"    border-color: #AAA;\n"
-"}\n"
-"")
-
-        self.gridLayout.addWidget(self.nombre, 1, 2, 1, 1)
-
-        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
-
-        self.gridLayout.addItem(self.horizontalSpacer, 1, 0, 1, 1)
-
-        self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
-
-        self.gridLayout.addItem(self.horizontalSpacer_2, 1, 3, 1, 1)
-
         self.labelNombre = QLabel(introduccionNombre)
         self.labelNombre.setObjectName(u"labelNombre")
         self.labelNombre.setMaximumSize(QSize(150, 50))
@@ -89,6 +39,14 @@ class Ui_introduccionNombre(object):
 "}")
 
         self.gridLayout.addWidget(self.labelNombre, 1, 1, 1, 1)
+
+        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.gridLayout.addItem(self.horizontalSpacer, 1, 0, 1, 1)
+
+        self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.gridLayout.addItem(self.horizontalSpacer_2, 1, 3, 1, 1)
 
         self.iniciarPartida = QPushButton(introduccionNombre)
         self.iniciarPartida.setObjectName(u"iniciarPartida")
@@ -132,7 +90,98 @@ class Ui_introduccionNombre(object):
 "")
         self.iniciarPartida.setInputMethodHints(Qt.InputMethodHint.ImhDate)
 
-        self.gridLayout.addWidget(self.iniciarPartida, 2, 1, 1, 2)
+        self.gridLayout.addWidget(self.iniciarPartida, 3, 1, 1, 2)
+
+        self.nombre = QLineEdit(introduccionNombre)
+        self.nombre.setObjectName(u"nombre")
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.nombre.sizePolicy().hasHeightForWidth())
+        self.nombre.setSizePolicy(sizePolicy)
+        self.nombre.setMaximumSize(QSize(500, 40))
+        self.nombre.setStyleSheet(u"QLineEdit {\n"
+"    background-color: #FFF7D2;            /* fondo beige claro */\n"
+"    border: 3px solid #C6A72F;            /* borde dorado */\n"
+"    border-radius: 8px;                   /* esquinas suaves */\n"
+"    color: #3A2F00;                       /* texto marr\u00f3n oscuro */\n"
+"    font-weight: bold;\n"
+"    font-family: \"Press Start 2P\", monospace;  /* si tienes fuente pixel */\n"
+"    font-size: 8px;\n"
+"    padding: 0px 10px;\n"
+"    selection-background-color: #F7D24A;  /* color de selecci\u00f3n */\n"
+"    selection-color: black;\n"
+"}\n"
+"\n"
+"QLineEdit:hover {\n"
+"    border-color: #E6C84F;                /* borde m\u00e1s brillante al pasar el rat\u00f3n */\n"
+"    background-color: #FFF4BD;\n"
+"}\n"
+"\n"
+"QLineEdit:focus {\n"
+"    border-color: #FFD700;                /* dorado intenso cuando se escribe */\n"
+"    background-color: #FFF9E0;\n"
+"    box-shadow: 0 0 10px #FFD700;         /* efecto resplandor dorado */\n"
+"}\n"
+"\n"
+"QLineEdit:disabled {\n"
+"    background-color: #E0E0"
+                        "E0;\n"
+"    color: #888;\n"
+"    border-color: #AAA;\n"
+"}\n"
+"")
+
+        self.gridLayout.addWidget(self.nombre, 1, 2, 1, 1)
+
+        self.label = QLabel(introduccionNombre)
+        self.label.setObjectName(u"label")
+        self.label.setStyleSheet(u"QLabel {\n"
+"    color: #3C3C3C;\n"
+"    font-size: 11px;\n"
+"    font-weight: bold;\n"
+"    padding: 6px;\n"
+"    letter-spacing: 1px;\n"
+"}")
+
+        self.gridLayout.addWidget(self.label, 2, 1, 1, 1)
+
+        self.lineEdit = QLineEdit(introduccionNombre)
+        self.lineEdit.setObjectName(u"lineEdit")
+        self.lineEdit.setMaximumSize(QSize(500, 40))
+        self.lineEdit.setStyleSheet(u"QLineEdit {\n"
+"    background-color: #FFF7D2;            /* fondo beige claro */\n"
+"    border: 3px solid #C6A72F;            /* borde dorado */\n"
+"    border-radius: 8px;                   /* esquinas suaves */\n"
+"    color: #3A2F00;                       /* texto marr\u00f3n oscuro */\n"
+"    font-weight: bold;\n"
+"    font-family: \"Press Start 2P\", monospace;  /* si tienes fuente pixel */\n"
+"    font-size: 8px;\n"
+"    padding: 0px 10px;\n"
+"    selection-background-color: #F7D24A;  /* color de selecci\u00f3n */\n"
+"    selection-color: black;\n"
+"}\n"
+"\n"
+"QLineEdit:hover {\n"
+"    border-color: #E6C84F;                /* borde m\u00e1s brillante al pasar el rat\u00f3n */\n"
+"    background-color: #FFF4BD;\n"
+"}\n"
+"\n"
+"QLineEdit:focus {\n"
+"    border-color: #FFD700;                /* dorado intenso cuando se escribe */\n"
+"    background-color: #FFF9E0;\n"
+"    box-shadow: 0 0 10px #FFD700;         /* efecto resplandor dorado */\n"
+"}\n"
+"\n"
+"QLineEdit:disabled {\n"
+"    background-color: #E0E0"
+                        "E0;\n"
+"    color: #888;\n"
+"    border-color: #AAA;\n"
+"}\n"
+"")
+
+        self.gridLayout.addWidget(self.lineEdit, 2, 2, 1, 1)
 
 
         self.retranslateUi(introduccionNombre)
@@ -142,8 +191,9 @@ class Ui_introduccionNombre(object):
 
     def retranslateUi(self, introduccionNombre):
         introduccionNombre.setWindowTitle(QCoreApplication.translate("introduccionNombre", u"Form", None))
-        self.nombre.setPlaceholderText(QCoreApplication.translate("introduccionNombre", u"Introduce el nombre", None))
         self.labelNombre.setText(QCoreApplication.translate("introduccionNombre", u"Introduce tu nombre:", None))
-        self.iniciarPartida.setText(QCoreApplication.translate("introduccionNombre", u"Iniciar partida", None))
+        self.iniciarPartida.setText(QCoreApplication.translate("introduccionNombre", u"Iniciar launcher", None))
+        self.nombre.setPlaceholderText(QCoreApplication.translate("introduccionNombre", u"Introduce el nombre", None))
+        self.label.setText(QCoreApplication.translate("introduccionNombre", u"Contrase\u00f1a", None))
     # retranslateUi
 

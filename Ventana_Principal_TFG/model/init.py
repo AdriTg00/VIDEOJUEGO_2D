@@ -1,5 +1,5 @@
-from model.config_bd import get_connection as get_config_connection
-from model.jugador_bd import inicializar_bd as inicializar_jugador_bd
+from model.configuracion import get_connection as get_config_connection
+
 
 def inicializar_bases():
     """

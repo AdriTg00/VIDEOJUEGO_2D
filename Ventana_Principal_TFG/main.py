@@ -2,13 +2,13 @@ import sys
 from PySide6.QtCore import QTranslator, QCoreApplication
 from PySide6.QtWidgets import QApplication
 from controller.app_controller import AppController
-from model.jugador_bd import inicializar_bd
 from resources import resources_rc
-from model.config_bd import create_table
+from services.configuracionService import ConfiguracionDAO
 
 def main():
-    create_table()
-    inicializar_bd()      
+    configuracion = ConfiguracionDAO()
+    configuracion._connect()
+    configuracion._ensure_table()
     app = QApplication(sys.argv)
     app.setApplicationName("Launcher")
     app.setStyleSheet("""
@@ -20,7 +20,7 @@ def main():
         }
     """)
     controller = AppController()
-    controller.launcher.setFixedSize(controller.launcher.size())
+    controller.introducir_nombre.setFixedSize(controller.launcher.size())
     controller.launcher.show()
     sys.exit(app.exec())
 

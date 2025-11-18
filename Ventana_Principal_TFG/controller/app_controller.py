@@ -7,6 +7,7 @@ from PySide6.QtCore import Qt
 
 class AppController:
     def __init__(self):
+        self.nombre_jugador = None
         self.app_state = {"language": "Español"}
         self.launcher = launcher(self.app_state)
         self.config_window = configuracion(self.app_state)
@@ -18,6 +19,9 @@ class AppController:
         self.launcher.idioma_cambiado.connect(self.config_window.apply_language)
         self.launcher.idioma_cambiado.connect(self.carg_partidas.apply_language)
         self.launcher.idioma_cambiado.connect(self.introducir_nombre.apply_language)
+       
+
+        
        
     
         

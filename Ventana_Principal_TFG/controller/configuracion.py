@@ -1,6 +1,7 @@
 from PySide6.QtWidgets import QWidget, QMessageBox
 from views.configuracion_ui import Ui_configuracion
-from model.config_bd import guardar_configuracion
+from services.configuracionService import ConfiguracionService
+from model.configuracion import Configuracion
 from translator import TRANSLATIONS
 
 
@@ -10,6 +11,7 @@ class configuracion(QWidget):
         super().__init__(parent)
         self.app_state = app_state
         self.ui = Ui_configuracion()
+        self.service = ConfiguracionService()
         self.ui.setupUi(self)
         self.ui.ventana.setChecked(True)
         self.ui.ventana.stateChanged.connect(self.sync_checkboxes)
@@ -66,8 +68,18 @@ class configuracion(QWidget):
         resolucion = self.ui.resolucion.currentText()
         modo_pantalla = "ventana" if self.ui.ventana.isChecked() else "completa"
 
-        guardar_configuracion(volumen_musica, volumen_sfx, resolucion, modo_pantalla)
+        # Crear modelo
+        config = Configuracion(
+            volumen_musica=volumen_musica,
+            volumen_sfx=volumen_sfx,
+            resolucion=resolucion,
+            modo_pantalla=modo_pantalla
+        )
 
+        # Guardar usando el SERVICE
+        self.service.guardar_configuracion(config)
+
+        # Mostrar mensaje
         msg = QMessageBox(self)
         msg.setWindowTitle("Guardado")
         msg.setText("Configuración guardada correctamente.")
