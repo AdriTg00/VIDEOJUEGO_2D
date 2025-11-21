@@ -36,7 +36,7 @@ class ConfiguracionDAO:
         conn.close()
 
         if row is None:
-            # No existe config → devolvemos default
+        
             return Configuracion()
 
         return Configuracion(*row)

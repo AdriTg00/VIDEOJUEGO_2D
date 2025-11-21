@@ -21,7 +21,6 @@ class cargar(QWidget):
         try:
             widget.clicked.disconnect()
         except Exception:
-            # Si no tenía conexión o no se puede desconectar, ignoramos
             pass
     
     def apply_language(self):
