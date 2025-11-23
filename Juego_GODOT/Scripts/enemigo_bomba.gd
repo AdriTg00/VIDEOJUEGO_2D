@@ -82,7 +82,7 @@ func _morir():
 	print("El cerdo ha muerto")
 	# Detiene cualquier movimiento o ataque
 	velocity = Vector2.ZERO
-	# Desactiva las colisiones (para no seguir detectando al jugador)
+	# Desactiva las colisiones (para no seguir detectando al jugador).
 	set_collision_layer_value(1, false)
 	set_collision_mask_value(1, false)
 
