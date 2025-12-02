@@ -5,7 +5,8 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_g4it2"]
 size = Vector2(127, 14)
 
-[node name="puerta_boss" type="Node2D"]
+[node name="puerta_boss" type="StaticBody2D"]
+collision_mask = 255
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("1_mbp0b")

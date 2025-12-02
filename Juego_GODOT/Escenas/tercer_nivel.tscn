@@ -555,7 +555,7 @@ zoom = Vector2(3.435, 3.435)
 position_smoothing_enabled = true
 
 [node name="puerta_boss" parent="." instance=ExtResource("11_lxuvy")]
-position = Vector2(879, -2)
+position = Vector2(875, -2)
 rotation = 1.5707964
 script = ExtResource("12_e4lui")
 
