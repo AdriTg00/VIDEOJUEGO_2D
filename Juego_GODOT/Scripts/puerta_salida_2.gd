@@ -2,7 +2,7 @@ extends Node2D
 
 @onready var anim = $StaticBody2D/AnimatedSprite2D
 
-signal jugador_entro_puerta
+signal jugador_entro_puerta_2do_nivel
 
 func _on_Area2D_body_entered(body):
 	if body.name == "Rey":
@@ -24,4 +24,4 @@ func entrar_nivel(jugador):
 	animacion_jugador.play("door_in")
 	await animacion_jugador.animation_finished
 
-	emit_signal("jugador_entro_puerta")
+	emit_signal("jugador_entro_puerta_2do_nivel")

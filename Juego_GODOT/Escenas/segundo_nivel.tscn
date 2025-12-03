@@ -1,4 +1,4 @@
-[gd_scene load_steps=70 format=3 uid="uid://g6qlkxdk0emo"]
+[gd_scene load_steps=71 format=3 uid="uid://g6qlkxdk0emo"]
 
 [ext_resource type="Script" uid="uid://hrcnw722cc3u" path="res://Scripts/canvas_layer_nivel2.gd" id="1_g6j3w"]
 [ext_resource type="Texture2D" uid="uid://de82kdu623pnf" path="res://Escenarios/Big Diamond Hit (18x14).png" id="2_74atf"]
@@ -14,6 +14,7 @@
 [ext_resource type="PackedScene" uid="uid://dg1cka305d3cl" path="res://Escenas/escenas_sueltas/enemigo2_0.tscn" id="12_hcc8u"]
 [ext_resource type="PackedScene" uid="uid://de8ylx7cosmsd" path="res://Escenas/escenas_sueltas/canvas_layer_dead.tscn" id="13_g6j3w"]
 [ext_resource type="PackedScene" uid="uid://bn8useixraffm" path="res://Escenas/escenas_sueltas/puerta_salida.tscn" id="14_g5ji5"]
+[ext_resource type="Script" uid="uid://dbfvrd2jghrv5" path="res://Scripts/puerta_salida_2.gd" id="15_kqenp"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_n1ln3"]
 atlas = ExtResource("2_74atf")
@@ -631,5 +632,6 @@ position = Vector2(2120, 218)
 
 [node name="canvas_layer_dead" parent="." instance=ExtResource("13_g6j3w")]
 
-[node name="puerta_salida" parent="." instance=ExtResource("14_g5ji5")]
+[node name="puerta_salida_2" parent="." instance=ExtResource("14_g5ji5")]
 position = Vector2(2949, 144)
+script = ExtResource("15_kqenp")

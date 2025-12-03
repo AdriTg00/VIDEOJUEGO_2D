@@ -1,7 +1,7 @@
 [gd_scene load_steps=69 format=3 uid="uid://b0vjtjiqkhxpo"]
 
 [ext_resource type="PackedScene" uid="uid://bojdsefgg5ctc" path="res://Escenas/escenas_sueltas/escenario1.tscn" id="1_6nong"]
-[ext_resource type="Script" uid="uid://d4caokhdyxue3" path="res://Scripts/primer_nivel.gd" id="1_11vps"]
+[ext_resource type="Script" uid="uid://d4caokhdyxue3" path="res://Scripts/paso_niveles.gd" id="1_11vps"]
 [ext_resource type="PackedScene" uid="uid://1eymk2mx5bv8" path="res://Escenas/escenas_sueltas/puerta.tscn" id="2_h3qja"]
 [ext_resource type="PackedScene" uid="uid://bv2mgkpwgojls" path="res://Escenas/escenas_sueltas/rey.tscn" id="3_metos"]
 [ext_resource type="Script" uid="uid://b8oqvc0fe7eue" path="res://Scripts/canvas_layer_nivel1.gd" id="4_h146j"]
