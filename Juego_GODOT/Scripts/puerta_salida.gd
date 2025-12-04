@@ -16,10 +16,6 @@ func entrar_nivel(jugador):
 	jugador.velocity = Vector2.ZERO
 	jugador.set_process_input(false)
 	await anim.animation_finished
-
-	
-
-
 	var animacion_jugador = jugador.get_node("AnimatedSprite2D") 
 	animacion_jugador.play("door_in")
 	await animacion_jugador.animation_finished

@@ -12,8 +12,8 @@
 [ext_resource type="PackedScene" uid="uid://dg1cka305d3cl" path="res://Escenas/escenas_sueltas/enemigo2_0.tscn" id="9_qo4cl"]
 [ext_resource type="PackedScene" uid="uid://bv2mgkpwgojls" path="res://Escenas/escenas_sueltas/rey.tscn" id="11_0225b"]
 [ext_resource type="PackedScene" uid="uid://dd8yqyttqxfb6" path="res://Escenas/escenas_sueltas/puerta_boss.tscn" id="11_lxuvy"]
-[ext_resource type="Script" uid="uid://pymxs1ckbmi2" path="res://Escenas/escenas_sueltas/puerta_boss.gd" id="12_e4lui"]
-[ext_resource type="Script" uid="uid://dbkkwgl7x5eog" path="res://Escenas/trigger_puerta.gd" id="13_sagrm"]
+[ext_resource type="Script" uid="uid://pymxs1ckbmi2" path="res://Scripts/puerta_boss.gd" id="12_e4lui"]
+[ext_resource type="Script" uid="uid://dbkkwgl7x5eog" path="res://Scripts/trigger_puerta.gd" id="13_sagrm"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_n1ln3"]
 atlas = ExtResource("2_bw7q8")
@@ -568,7 +568,7 @@ position = Vector2(999, 113)
 script = ExtResource("13_sagrm")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="trigger_puerta"]
-position = Vector2(-18, -82)
+position = Vector2(12, -82)
 shape = SubResource("RectangleShape2D_m18tv")
 
 [connection signal="body_entered" from="trigger_puerta" to="trigger_puerta" method="_on_body_entered"]

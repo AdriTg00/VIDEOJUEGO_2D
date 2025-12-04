@@ -13,7 +13,7 @@
 [ext_resource type="Script" uid="uid://50cdm4gmvq8u" path="res://Scripts/enemigo2_0.gd" id="11_hcc8u"]
 [ext_resource type="PackedScene" uid="uid://dg1cka305d3cl" path="res://Escenas/escenas_sueltas/enemigo2_0.tscn" id="12_hcc8u"]
 [ext_resource type="PackedScene" uid="uid://de8ylx7cosmsd" path="res://Escenas/escenas_sueltas/canvas_layer_dead.tscn" id="13_g6j3w"]
-[ext_resource type="PackedScene" uid="uid://bn8useixraffm" path="res://Escenas/escenas_sueltas/puerta_salida.tscn" id="14_g5ji5"]
+[ext_resource type="PackedScene" uid="uid://be3dx6tqs6wg" path="res://Escenas/escenas_sueltas/puerta_salida_2.tscn" id="13_kqenp"]
 [ext_resource type="Script" uid="uid://dbfvrd2jghrv5" path="res://Scripts/puerta_salida_2.gd" id="15_kqenp"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_n1ln3"]
@@ -507,21 +507,13 @@ offset_bottom = 110.0
 theme_override_fonts/font = ExtResource("4_6dj0q")
 theme_override_font_sizes/font_size = 60
 
-[node name="StaticBody2D" parent="." instance=ExtResource("5_6dj0q")]
+[node name="Escenario" parent="." instance=ExtResource("5_6dj0q")]
 position = Vector2(127, -19)
 
 [node name="Pausa" parent="." instance=ExtResource("7_ep8kk")]
 
 [node name="Puerta" parent="." instance=ExtResource("7_0scks")]
 position = Vector2(-43, -45)
-
-[node name="Rey" parent="." instance=ExtResource("5_74atf")]
-position = Vector2(-35, -37)
-
-[node name="Camera2D" type="Camera2D" parent="Rey"]
-position = Vector2(0, -26.065)
-zoom = Vector2(3.435, 3.435)
-position_smoothing_enabled = true
 
 [node name="monedas" type="Node" parent="."]
 
@@ -632,6 +624,14 @@ position = Vector2(2120, 218)
 
 [node name="canvas_layer_dead" parent="." instance=ExtResource("13_g6j3w")]
 
-[node name="puerta_salida_2" parent="." instance=ExtResource("14_g5ji5")]
-position = Vector2(2949, 144)
+[node name="puerta_salida_2" parent="." instance=ExtResource("13_kqenp")]
+position = Vector2(2948, 145)
 script = ExtResource("15_kqenp")
+
+[node name="Rey" parent="." instance=ExtResource("5_74atf")]
+position = Vector2(2837, 156)
+
+[node name="Camera2D" type="Camera2D" parent="Rey"]
+position = Vector2(0, -26.065)
+zoom = Vector2(3.435, 3.435)
+position_smoothing_enabled = true
