@@ -1,6 +1,7 @@
-[gd_scene load_steps=71 format=3 uid="uid://g6qlkxdk0emo"]
+[gd_scene load_steps=72 format=3 uid="uid://g6qlkxdk0emo"]
 
 [ext_resource type="Script" uid="uid://hrcnw722cc3u" path="res://Scripts/canvas_layer_nivel2.gd" id="1_g6j3w"]
+[ext_resource type="Script" uid="uid://dxt2nh8x8vbbl" path="res://Scripts/paso_nivel_3.gd" id="1_tmjps"]
 [ext_resource type="Texture2D" uid="uid://de82kdu623pnf" path="res://Escenarios/Big Diamond Hit (18x14).png" id="2_74atf"]
 [ext_resource type="Texture2D" uid="uid://d1b1b2vush8r3" path="res://Escenarios/Big Heart Idle (18x14).png" id="3_q3gp6"]
 [ext_resource type="FontFile" uid="uid://c1jfsmqgedydq" path="res://recursos/upheavtt.ttf" id="4_6dj0q"]
@@ -432,6 +433,7 @@ animations = [{
 }]
 
 [node name="Juego" type="Node2D"]
+script = ExtResource("1_tmjps")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 script = ExtResource("1_g6j3w")

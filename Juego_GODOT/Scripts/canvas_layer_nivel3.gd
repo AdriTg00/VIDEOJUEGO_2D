@@ -22,7 +22,7 @@ func _ready():
 	#Empieza el tiempo
 	start_timer()
 	death_label.text = "DEATHS: " + str(Global.death_count)
-	Global.nivel = 2
+	Global.nivel = 3
 	level_section.text = "LEVEL " + str(Global.nivel)
 
 	#Se empieza con 0 puntos
@@ -67,7 +67,7 @@ func añadir_moneda(amount: int):
 func _process(delta : float):
 	if running:
 		
-		Global.tiempo_total_nivel2 += delta
+		Global.tiempo_total_nivel3 += delta
 		update_timer_label()
 		
 	if not camara_actual:
