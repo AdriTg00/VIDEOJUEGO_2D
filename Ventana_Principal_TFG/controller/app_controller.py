@@ -62,6 +62,7 @@ class AppController:
             print("No existe usuario guardado → pedir nombre")
             self.introducir_nombre.setWindowModality(Qt.ApplicationModal) 
             self.introducir_nombre.show()  
+            
 
 
    
