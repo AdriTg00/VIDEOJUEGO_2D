@@ -2,7 +2,9 @@ name: Build Godot Windows EXE
 
 on:
   push:
-    branches: ["main"]
+    branches: [ "main", "rama-pruebas" ]
+  pull_request:
+    branches: [ "main", "rama-pruebas" ]
 
 jobs:
   build-windows:
