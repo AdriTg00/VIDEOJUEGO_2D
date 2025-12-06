@@ -20,19 +20,35 @@ jobs:
         python-version: "3.11"
 
     - name: Install dependencies
+      # Usamos PowerShell-friendly logic para requirements.txt
+      shell: pwsh
       run: |
         python -m pip install --upgrade pip
-        pip install -r requirements.txt || echo "No requirements.txt found"
-        pip install pyinstaller PySide6
+        if (Test-Path -Path "requirements.txt") {
+          pip install -r requirements.txt
+        } else {
+          Write-Host "No requirements.txt found"
+        }
+        # Aseguramos pyinstaller y PySide6 y requests
+        pip install pyinstaller PySide6 requests
+
     - name: Build executable (from Ventana_Principal_TFG)
       working-directory: Ventana_Principal_TFG
+      shell: pwsh
       run: |
-        pyinstaller main.py --onefile --noconsole --name Launcher_Videojuego `
-          --hidden-import PySide6 `
-          --hidden-import PySide6.QtCore `
-          --hidden-import PySide6.QtGui `
-          --hidden-import PySide6.QtWidgets `
-          --collect-all PySide6
+        # Ejecutar PyInstaller en UNA SÓLA LÍNEA para evitar problemas de continuación
+        python -m PyInstaller main.py --onefile --noconsole --name Launcher_Videojuego --hidden-import requests --hidden-import PySide6 --hidden-import PySide6.QtCore --hidden-import PySide6.QtGui --hidden-import PySide6.QtWidgets --collect-all PySide6
+
+        Write-Host "Contenido de Ventana_Principal_TFG (raíz):"
+        dir
+
+        Write-Host "Contenido de Ventana_Principal_TFG/dist:"
+        if (Test-Path -Path dist) {
+          dir dist
+        } else {
+          Write-Host "No existe carpeta dist (falló PyInstaller?)"
+        }
+
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
