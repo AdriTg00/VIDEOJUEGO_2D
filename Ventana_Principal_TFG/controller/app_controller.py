@@ -47,8 +47,6 @@ class AppController:
     
     def abrir_nueva_partida(self):
         print("Abriendo ventana de introducción de nombre desde el controlador")
-        self.introducir_nombre.setWindowModality(Qt.ApplicationModal)
-        self.introducir_nombre.show()
     
     def comprobar_usuario_local(self):
         if os.path.exists("usuario_local.json"):
