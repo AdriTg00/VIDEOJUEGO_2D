@@ -20,7 +20,7 @@ jobs:
         uses: dawidd6/action-download-artifact@v2
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          workflow: "python-app.yml"
+          workflow: "Python-app.yml"
           name: "Launcher_Videojuego_exe"
           path: package/launcher
           branch: main
