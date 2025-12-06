@@ -15,9 +15,9 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QGridLayout, QHeaderView, QLabel,
-    QSizePolicy, QSpacerItem, QTableWidget, QTableWidgetItem,
-    QWidget)
+from PySide6.QtWidgets import (QAbstractItemView, QApplication, QGridLayout, QHeaderView,
+    QLabel, QSizePolicy, QSpacerItem, QTableWidget,
+    QTableWidgetItem, QWidget)
 
 class Ui_partidaGuardada(object):
     def setupUi(self, partidaGuardada):
@@ -121,6 +121,11 @@ class Ui_partidaGuardada(object):
 "    height: 14px;\n"
 "}\n"
 "")
+        self.tableWidget.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.tableWidget.setAlternatingRowColors(True)
+        self.tableWidget.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
+        self.tableWidget.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
+        self.tableWidget.setSortingEnabled(True)
         self.tableWidget.setColumnCount(7)
 
         self.gridLayout.addWidget(self.tableWidget, 4, 0, 1, 1)
