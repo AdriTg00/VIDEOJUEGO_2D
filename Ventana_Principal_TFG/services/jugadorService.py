@@ -6,9 +6,9 @@ import os
 class JugadorService:
     LOCAL_FILE = "usuario_local.json"
 
-    def __init__(self, dao: JugadorDAO = None):
-        # si no pasas dao, creamos uno nuevo
-        self.dao = dao if dao is not None else JugadorDAO()
+    def __init__(self, dao):
+        self.dao = JugadorDAO()
+        self.dao = dao
 
     def validar_y_crear(self, nombre: str) -> bool:
         """
