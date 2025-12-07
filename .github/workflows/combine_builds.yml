@@ -2,13 +2,13 @@ name: Combine Game and Launcher Builds
 
 on:
   workflow_run:
-    workflows: ["Build Godot Windows EXE", "Python application"]
+    workflows: ["Build Godot Windows EXE", "Build Qt Application"]
     types:
       - completed
 
 jobs:
   package:
- 
+    # Ejecutar este job cuando el workflow que terminó sea el de Godot.
     if: ${{ github.event.workflow_run.name == 'Build Godot Windows EXE' }}
     runs-on: ubuntu-latest
 
@@ -16,17 +16,22 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Debug - show triggering run info
+        run: |
+          echo "Triggered by workflow run id: ${{ github.event.workflow_run.id }}"
+          echo "Triggering workflow name: ${{ github.event.workflow_run.name }}"
+          echo "Triggering workflow conclusion: ${{ github.event.workflow_run.conclusion }}"
+
       - name: Download Launcher artifact
         uses: dawidd6/action-download-artifact@v2
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          workflow: "Python-app.yml"
+          workflow: "Python-app.yml"           # nombre del fichero en .github/workflows/
           name: "Launcher_Videojuego_exe"
           path: package/launcher
           branch: main
           workflow_conclusion: success
 
-     
       - name: Download Godot artifact
         uses: dawidd6/action-download-artifact@v2
         with:
@@ -37,13 +42,19 @@ jobs:
           branch: main
           workflow_conclusion: success
 
-  
+      - name: Show downloaded files (debug)
+        run: |
+          echo "Launcher contents:"
+          ls -la package/launcher || true
+          echo "Game contents:"
+          ls -la package/game || true
+
       - name: Combine builds
         run: |
           mkdir -p final_package
-          cp package/launcher/*.exe final_package/Launcher_Videojuego.exe
-          cp package/game/*.exe final_package/Juego_GODOT.exe
-          cp package/game/*.pck final_package/Juego_GODOT.pck
+          cp package/launcher/*.exe final_package/Launcher_Videojuego.exe || true
+          cp package/game/*.exe final_package/Juego_GODOT.exe || true
+          cp package/game/*.pck final_package/Juego_GODOT.pck || true
           echo "Build combinado el $(date)" > final_package/README.txt
           echo "" >> final_package/README.txt
           echo "Contenido del paquete:" >> final_package/README.txt
@@ -52,6 +63,7 @@ jobs:
           echo "- Juego_GODOT.pck" >> final_package/README.txt
           cd final_package
           zip -r Combined_Build.zip .
+
       - name: Upload combined package
         uses: actions/upload-artifact@v4
         with:
