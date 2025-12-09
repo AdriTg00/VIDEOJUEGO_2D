@@ -631,7 +631,7 @@ position = Vector2(2948, 145)
 script = ExtResource("15_kqenp")
 
 [node name="Rey" parent="." instance=ExtResource("5_74atf")]
-position = Vector2(2837, 156)
+position = Vector2(-35, -34)
 
 [node name="Camera2D" type="Camera2D" parent="Rey"]
 position = Vector2(0, -26.065)
