@@ -64,8 +64,6 @@ func _aplicar_gravedad(delta):
 # --- PERSEGUIR AL JUGADOR ---
 func _perseguir_jugador():
 	var dist = global_position.distance_to(jugador.global_position)
-
-
 	# Dirección hacia el jugador
 	var dir = sign(jugador.global_position.x - global_position.x)
 	velocity.x = dir * velocidad
@@ -109,7 +107,6 @@ func recibir_dano(cantidad: int = 1):
 	move_and_slide()
 	await anim.animation_finished
 	
-	en_persecucion = true
 	recibiendo_daño = false
 	invulnerable = false
 	
@@ -168,6 +165,8 @@ func _on_attack_area_body_entered(body: Node2D) -> void:
 	if body and body.is_inside_tree() and body.has_method("recibir_dano"):
 		body.recibir_dano(1)
 	await anim.animation_finished
+	var tiempo := 1
+	await get_tree().create_timer(tiempo).timeout
 	en_persecucion = true
 	
 		
