@@ -13,6 +13,6 @@ func reproducir(anim_name: String, duracion: float):
 	# Bucle manual hasta que el timer termine
 	while timer.time_left > 0:
 		await sprite.animation_finished
-		sprite.play(anim_name) # reiniciar animación
+		sprite.play(anim_name) 
 
 	sprite.visible = false

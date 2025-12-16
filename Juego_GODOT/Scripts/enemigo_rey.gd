@@ -166,21 +166,20 @@ func _on_jugador_salio(cuerpo):
 
 
 func _on_attack_area_body_entered(body: Node2D) -> void:
-	en_persecucion = false
-	velocity.x = 0
-	anim.play("attack")
+	
 	if not body:
 			return
 	if not body.has_method("recibir_dano"):
 			return
-	
-	
 	if body and body.is_inside_tree() and body.has_method("recibir_dano"):
+		en_persecucion = false
+		velocity.x = 0
+		anim.play("attack")
 		body.recibir_dano(1)
-	await anim.animation_finished
-	anim.play("idle")
-	var tiempo := 1
-	await get_tree().create_timer(tiempo).timeout
-	en_persecucion = true
+		await anim.animation_finished
+		anim.play("idle")
+		var tiempo := 1
+		await get_tree().create_timer(tiempo).timeout
+		en_persecucion = true
 	
 		
