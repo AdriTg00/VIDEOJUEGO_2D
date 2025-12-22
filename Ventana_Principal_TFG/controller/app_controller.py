@@ -1,13 +1,42 @@
 # app_controller.py
+
 from .VentanaInicio import launcher
 from .cargarPartidas import cargar
 from .configuracion import configuracion
 from .introduccionNombre import introducirNombre
 
 from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QMessageBox
+
 import os
 import json
+import sys
+import subprocess
 
+
+# =========================================================
+# UTILIDADES
+# =========================================================
+
+def get_base_dir():
+    """
+    Devuelve el directorio base de ejecución:
+    - En ejecutable (PyInstaller): carpeta donde está Launcher.exe
+    - En desarrollo: raíz del proyecto
+    """
+    if getattr(sys, "frozen", False):
+        return os.path.dirname(sys.executable)
+    else:
+        # Ventana_Principal_TFG/controller/app_controller.py
+        # -> subir dos niveles para llegar a la raíz
+        return os.path.abspath(
+            os.path.join(os.path.dirname(__file__), "..", "..")
+        )
+
+
+# =========================================================
+# CONTROLADOR PRINCIPAL
+# =========================================================
 
 class AppController:
     def __init__(self):
@@ -72,7 +101,7 @@ class AppController:
                 self.nombre_jugador = user_id
                 self.app_state["usuario"] = user_id
 
-                self.mostrar_launcher(user_id)
+                self.mostrar_launcher()
 
             except Exception as e:
                 print("[AppController] Error leyendo usuario_local.json:", e)
@@ -99,13 +128,13 @@ class AppController:
         except Exception as e:
             print("[AppController] Error guardando usuario_local.json:", e)
 
-        self.mostrar_launcher(user_id)
+        self.mostrar_launcher()
 
     # =========================================================
     # MOSTRAR VENTANAS
     # =========================================================
 
-    def mostrar_launcher(self, user_id):
+    def mostrar_launcher(self):
         """
         Muestra el launcher y oculta la ventana de introducción de nombre
         """
@@ -116,6 +145,7 @@ class AppController:
 
         if not self.launcher.isVisible():
             self.launcher.show()
+
         self.launcher.raise_()
         self.launcher.activateWindow()
 
@@ -142,20 +172,51 @@ class AppController:
 
     def abrir_nueva_partida(self):
         """
-        Nueva partida:
-        - NO pide nombre
-        - Usa el usuario ya registrado
+        Acción del botón 'Nueva partida'
         """
-        print("Nueva partida solicitada")
-
         if not self.app_state.get("usuario"):
-            print("No hay usuario en memoria → pedir nombre")
             self.mostrar_introducir_nombre()
             return
 
-        # Aquí debería arrancar el juego real
-        # Ejemplo:
-        # self.juego = Juego(self.user_id, self.app_state)
-        # self.juego.show()
+        try:
+            self.lanzar_juego()
+        except Exception as e:
+            QMessageBox.critical(
+                self.launcher,
+                "Error al iniciar el juego",
+                str(e)
+            )
 
-        print(f"Nueva partida iniciada para usuario: {self.user_id}")
+    def lanzar_juego(self):
+        """
+        Lanza el ejecutable del juego Godot creando un token de arranque
+        """
+        base_dir = get_base_dir()
+
+        game_dir = os.path.join(base_dir, "game")
+        runtime_dir = os.path.join(base_dir, "runtime")
+
+        os.makedirs(runtime_dir, exist_ok=True)
+
+        # Crear token de lanzamiento
+        token_path = os.path.join(runtime_dir, "launch_token.json")
+        with open(token_path, "w", encoding="utf-8") as f:
+            json.dump(
+                {
+                    "launched_by": "launcher",
+                    "user": self.app_state.get("usuario")
+                },
+                f
+            )
+
+        juego_exe = os.path.join(game_dir, "Juego.exe")
+
+        if not os.path.exists(juego_exe):
+            raise RuntimeError(
+                f"No se encontró el ejecutable del juego en:\n{juego_exe}"
+            )
+
+        subprocess.Popen(
+            [juego_exe],
+            cwd=game_dir
+        )
