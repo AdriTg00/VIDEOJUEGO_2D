@@ -43,10 +43,15 @@ jobs:
         curl -L -o godot.zip https://github.com/godotengine/godot/releases/download/4.2.1-stable/Godot_v4.2.1-stable_win64.exe.zip
         tar -xf godot.zip
         ren Godot_v4.2.1-stable_win64.exe godot.exe
-
+    
+    - name: Create Godot export directory
+      run: |
+        mkdir Juego_GODOT\export
+    
     - name: Export Godot game
       run: |
         .\godot.exe --headless --path Juego_GODOT --export-release "Windows Desktop" export/Juego.exe
+
 
     # -------------------------------------------------
     # CREATE DIST STRUCTURE
