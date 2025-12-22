@@ -10,7 +10,7 @@ jobs:
 
     env:
       GODOT_VERSION: 4.5
-      EXPORT_NAME: game.exe
+      EXPORT_NAME: Juego.exe
 
     steps:
       - name: Checkout del código
@@ -49,9 +49,9 @@ jobs:
           echo "Buscando templates de Windows:"
           find ~/.local/share/godot/export_templates/4.5.stable/ -name "*windows*" -o -name "*win*"
 
-      - name: Crear carpeta de build
+      - name: Crear estructura de carpetas
         working-directory: Juego_GODOT
-        run: mkdir -p build/windows
+        run: mkdir -p Dist/game
 
       - name: Exportar a Windows (.exe)
         working-directory: Juego_GODOT
@@ -59,11 +59,10 @@ jobs:
           ~/godot/Godot_v4.5-stable_linux.x86_64 \
             --headless \
             --verbose \
-            --export-release "Windows Desktop" build/windows/${EXPORT_NAME}
+            --export-release "Windows Desktop" Dist/game/${EXPORT_NAME}
 
-          - name: Upload Godot artifact
-            uses: actions/upload-artifact@v4
-            with:
-              name: godot-build
-              path: Juego_GODOT/export
-
+      - name: Subir artefacto game
+        uses: actions/upload-artifact@v4
+        with:
+          name: game-build
+          path: Juego_GODOT/Dist/game/
