@@ -1,62 +1,49 @@
-name: Build Dist Package
+name: Combine Launcher and Godot Builds
 
 on:
-  push:
-    branches: [ main ]
+  workflow_run:
+    workflows:
+      - Python application
+      - Build Godot Windows EXE
+    types:
+      - completed
 
 jobs:
-  build_dist:
+  combine:
+    # Solo ejecutar cuando AMBOS han terminado con éxito
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: windows-latest
 
     steps:
-    # -------------------------------------------------
-    # Checkout
-    # -------------------------------------------------
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    # -------------------------------------------------
-    # BUILD LAUNCHER (PySide / PyInstaller)
-    # -------------------------------------------------
-    - name: Set up Python
-      uses: actions/setup-python@v5
+    # -----------------------------
+    # Descargar Launcher
+    # -----------------------------
+    - name: Download Launcher artifact
+      uses: dawidd6/action-download-artifact@v2
       with:
-        python-version: '3.11'
+        workflow: Python-app.yml
+        name: Launcher_Videojuego_exe
+        path: tmp/launcher
+        branch: main
 
-    - name: Install launcher dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r Ventana_Principal_TFG/requirements.txt
-        pip install pyinstaller
+    # -----------------------------
+    # Descargar Godot Game
+    # -----------------------------
+    - name: Download Godot artifact
+      uses: dawidd6/action-download-artifact@v2
+      with:
+        workflow: build_godot.yml
+        name: windows-build
+        path: tmp/game
+        branch: main
 
-    - name: Build Launcher
-      run: |
-        cd Ventana_Principal_TFG
-        pyinstaller --noconfirm --onefile --windowed main.py --name Launcher
-        cd ..
-
-    # -------------------------------------------------
-    # BUILD GODOT GAME (CLI OFICIAL)
-    # -------------------------------------------------
-    - name: Download Godot
-      run: |
-        curl -L -o godot.zip https://github.com/godotengine/godot/releases/download/4.2.1-stable/Godot_v4.2.1-stable_win64.exe.zip
-        tar -xf godot.zip
-        ren Godot_v4.2.1-stable_win64.exe godot.exe
-    
-    - name: Create Godot export directory
-      run: |
-        mkdir Juego_GODOT\export
-    
-    - name: Export Godot game
-      run: |
-        .\godot.exe --headless --path Juego_GODOT --export-release "Windows Desktop" export/Juego.exe
-
-
-    # -------------------------------------------------
-    # CREATE DIST STRUCTURE
-    # -------------------------------------------------
-    - name: Create Dist folder structure
+    # -----------------------------
+    # Crear estructura final
+    # -----------------------------
+    - name: Create Dist structure
       run: |
         mkdir Dist
         mkdir Dist\game
@@ -64,29 +51,36 @@ jobs:
         mkdir Dist\config
         mkdir Dist\saves
 
-    # -------------------------------------------------
-    # COPY FILES
-    # -------------------------------------------------
+    # -----------------------------
+    # Copiar Launcher
+    # -----------------------------
     - name: Copy Launcher
       run: |
-        copy Ventana_Principal_TFG\dist\Launcher.exe Dist\Launcher.exe
+        copy tmp\launcher\*.exe Dist\Launcher.exe
 
+    # -----------------------------
+    # Copiar Juego
+    # -----------------------------
     - name: Copy Godot game
       run: |
-        xcopy Juego_GODOT\export\* Dist\game\ /E /I /Y
-  
-    - name: Copy user config if exists
+        copy tmp\game\*.exe Dist\game\Juego.exe
+        copy tmp\game\*.pck Dist\game\Juego.pck
+
+    # -----------------------------
+    # Usuario (si existe)
+    # -----------------------------
+    - name: Create user config
       shell: powershell
       run: |
         if (Test-Path "usuario_local.json") {
-        Copy-Item "usuario_local.json" "Dist\config\usuario_local.json"
+          Copy-Item "usuario_local.json" "Dist\config\usuario_local.json"
         } else {
-        '{}' | Out-File "Dist\config\usuario_local.json" -Encoding utf8
+          '{}' | Out-File "Dist\config\usuario_local.json" -Encoding utf8
         }
 
-    # -------------------------------------------------
-    # UPLOAD FINAL PACKAGE
-    # -------------------------------------------------
+    # -----------------------------
+    # Subir paquete final
+    # -----------------------------
     - name: Upload Dist Package
       uses: actions/upload-artifact@v4
       with:
