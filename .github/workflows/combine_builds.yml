@@ -16,7 +16,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-   
+      # ----------------------------------------
+      # Descargar Launcher
+      # ----------------------------------------
       - name: Download Launcher artifact
         uses: dawidd6/action-download-artifact@v2
         with:
@@ -27,7 +29,9 @@ jobs:
           workflow_conclusion: success
           path: package/launcher
 
-
+      # ----------------------------------------
+      # Descargar Juego Godot
+      # ----------------------------------------
       - name: Download Godot artifact
         uses: dawidd6/action-download-artifact@v2
         with:
@@ -38,16 +42,33 @@ jobs:
           workflow_conclusion: success
           path: package/game
 
-
+      # ----------------------------------------
+      # Combinar builds con estructura limpia
+      # ----------------------------------------
       - name: Combine builds
         run: |
-          mkdir -p final_package
-          cp package/launcher/*.exe final_package/Launcher_Videojuego.exe
-          cp package/game/*.exe final_package/Juego_GODOT.exe
-          cp package/game/*.pck final_package/Juego_GODOT.pck
-          echo "Build combinado el $(date)" > final_package/README.txt
-          zip -r final_package/Combined_Build.zip final_package/*
+          echo "Creando estructura final..."
 
+          mkdir -p final_package/game
+          mkdir -p final_package/runtime
+
+          # Launcher (raíz)
+          cp package/launcher/*.exe final_package/Launcher_Videojuego.exe
+
+          # Juego (carpeta game)
+          cp package/game/*.exe final_package/game/Juego.exe
+          cp package/game/*.pck final_package/game/Juego.pck
+
+          # README
+          echo "Build combinado generado el $(date)" > final_package/README.txt
+
+          # ZIP final
+          cd final_package
+          zip -r Combined_Build.zip .
+
+      # ----------------------------------------
+      # Subir artefacto final
+      # ----------------------------------------
       - name: Upload combined package
         uses: actions/upload-artifact@v4
         with:
