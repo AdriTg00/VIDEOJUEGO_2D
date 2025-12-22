@@ -61,8 +61,9 @@ jobs:
             --verbose \
             --export-release "Windows Desktop" build/windows/${EXPORT_NAME}
 
-      - name: Subir artefacto .exe
-        uses: actions/upload-artifact@v4
-        with:
-          name: windows-build
-          path: Juego_GODOT/build/windows/
+          - name: Upload Godot artifact
+            uses: actions/upload-artifact@v4
+            with:
+              name: godot-build
+              path: Juego_GODOT/export
+
