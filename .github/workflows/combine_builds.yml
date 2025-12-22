@@ -1,55 +1,76 @@
 name: Combine Game and Launcher Builds
 
 on:
-  workflow_run:
-    workflows:
-      - Build Godot Windows EXE
-    types:
-      - completed
+  workflow_dispatch:
 
 jobs:
   package:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-   
-      - name: Download Launcher artifact
-        uses: dawidd6/action-download-artifact@v2
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          workflow: "Build Qt Application"
-          name: "Launcher_Videojuego_exe"
-          branch: main
-          workflow_conclusion: success
-          path: package/launcher
+      # ---------------------------------------
+      # Descargar último Launcher exitoso
+      # ---------------------------------------
+      - name: Download latest Launcher build
+        run: |
+          echo "Buscando último build exitoso del Launcher..."
 
+          RUN_ID=$(gh run list \
+            --workflow "Build Qt Application" \
+            --branch main \
+            --status success \
+            --limit 1 \
+            --json databaseId \
+            --jq '.[0].databaseId')
 
-      - name: Download Godot artifact
-        uses: dawidd6/action-download-artifact@v2
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          workflow: "Build Godot Windows EXE"
-          name: "windows-build"
-          branch: main
-          workflow_conclusion: success
-          path: package/game
+          echo "Launcher run id: $RUN_ID"
 
+          gh run download "$RUN_ID" \
+            --name Launcher_Videojuego_exe \
+            --dir package/launcher
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # ---------------------------------------
+      # Descargar último Godot exitoso
+      # ---------------------------------------
+      - name: Download latest Godot build
+        run: |
+          echo "Buscando último build exitoso de Godot..."
+
+          RUN_ID=$(gh run list \
+            --workflow "Build Godot Windows EXE" \
+            --branch main \
+            --status success \
+            --limit 1 \
+            --json databaseId \
+            --jq '.[0].databaseId')
+
+          echo "Godot run id: $RUN_ID"
+
+          gh run download "$RUN_ID" \
+            --name windows-build \
+            --dir package/game
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # ---------------------------------------
+      # Combinar estructura final
+      # ---------------------------------------
       - name: Combine builds
         run: |
-          mkdir -p final_package
-          cp package/launcher/*.exe final_package/Launcher_Videojuego.exe
-          cp package/game/*.exe final_package/Juego_GODOT.exe
-          cp package/game/*.pck final_package/Juego_GODOT.pck
-          echo "Build combinado el $(date)" > final_package/README.txt
-          zip -r final_package/Combined_Build.zip final_package/*
+          mkdir -p final_package/game final_package/runtime
 
-      - name: Upload combined package
-        uses: actions/upload-artifact@v4
+          cp package/launcher/*.exe final_package/Launcher_Videojuego.exe
+          cp package/game/*.exe final_package/game/Juego.exe
+          cp package/game/*.pck final_package/game/Juego.pck
+
+          cd final_package
+          zip -r Combined_Build.zip .
+
+      - uses: actions/upload-artifact@v4
         with:
           name: Combined_Game_and_Launcher
           path: final_package/Combined_Build.zip
