@@ -3,6 +3,7 @@ name: Build Godot Windows EXE
 on:
   push:
 <<<<<<< HEAD
+<<<<<<< HEAD
     branches: [ main ]
   workflow_dispatch:
 
@@ -89,6 +90,48 @@ jobs:
       - name: Dar permisos
         run: chmod +x ~/godot/Godot_v4.5-stable_linux.x86_64
 
+=======
+    branches: ["main"]
+
+jobs:
+  build-windows:
+    runs-on: ubuntu-latest
+
+    env:
+      GODOT_VERSION: 4.5
+      EXPORT_NAME: Juego.exe
+
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Configurar caché
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache
+          key: ${{ runner.os }}-godot-${{ env.GODOT_VERSION }}
+
+      - name: Descargar Godot headless y export templates
+        working-directory: Juego_GODOT
+        run: |
+          GODOT_VERSION=${GODOT_VERSION}
+          wget https://github.com/godotengine/godot-builds/releases/download/4.5-stable/Godot_v4.5-stable_linux.x86_64.zip
+          wget https://github.com/godotengine/godot-builds/releases/download/4.5-stable/Godot_v4.5-stable_export_templates.tpz
+          unzip Godot_v4.5-stable_linux.x86_64.zip -d ~/godot
+          mkdir -p ~/.local/share/godot/export_templates/4.5.stable/
+          unzip Godot_v4.5-stable_export_templates.tpz
+          mv templates/* ~/.local/share/godot/export_templates/4.5.stable/
+
+      - name: Instalar rcedit
+        run: |
+          wget https://github.com/electron/rcedit/releases/download/v1.1.1/rcedit-x64.exe
+          mkdir -p ~/.local/share/godot/
+          mv rcedit-x64.exe ~/.local/share/godot/rcedit.exe
+
+      - name: Dar permisos
+        run: chmod +x ~/godot/Godot_v4.5-stable_linux.x86_64
+
+>>>>>>> parent of 1345fed (Update GitHub Actions workflow for Qt application build)
       - name: Verificar export templates
         run: |
           echo "Verificando templates instalados:"
@@ -113,4 +156,7 @@ jobs:
         with:
           name: game-build
           path: Juego_GODOT/Dist/game/
+<<<<<<< HEAD
+>>>>>>> parent of 1345fed (Update GitHub Actions workflow for Qt application build)
+=======
 >>>>>>> parent of 1345fed (Update GitHub Actions workflow for Qt application build)
