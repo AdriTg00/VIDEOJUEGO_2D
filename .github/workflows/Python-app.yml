@@ -53,4 +53,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: Launcher_Videojuego_exe
-        path: Ventana_Principal_TFG/Launcher_Videojuego.exe
+        path: Ventana_Principal_TFG/dist/Launcher_Videojuego.exe
