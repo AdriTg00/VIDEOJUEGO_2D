@@ -1,5 +1,3 @@
-# app_controller.py
-
 from .VentanaInicio import launcher
 from .cargarPartidas import cargar
 from .configuracion import configuracion
@@ -27,11 +25,16 @@ def get_base_dir():
     if getattr(sys, "frozen", False):
         return os.path.dirname(sys.executable)
     else:
-        # Ventana_Principal_TFG/controller/app_controller.py
-        # -> subir dos niveles para llegar a la raíz
         return os.path.abspath(
             os.path.join(os.path.dirname(__file__), "..", "..")
         )
+
+
+def get_user_file():
+    """
+    Ruta absoluta al archivo de usuario persistente
+    """
+    return os.path.join(get_base_dir(), "usuario_local.json")
 
 
 # =========================================================
@@ -50,6 +53,9 @@ class AppController:
 
         self.user_id = None
         self.nombre_jugador = None
+
+        # Flag para evitar doble lanzamiento
+        self.juego_lanzado = False
 
         # -----------------------------
         # Ventanas
@@ -85,13 +91,11 @@ class AppController:
     # =========================================================
 
     def comprobar_usuario_local(self):
-        """
-        Si existe usuario_local.json → entrar directo al launcher
-        Si no existe → pedir nombre
-        """
-        if os.path.exists("usuario_local.json"):
+        user_file = get_user_file()
+
+        if os.path.exists(user_file):
             try:
-                with open("usuario_local.json", "r", encoding="utf-8") as f:
+                with open(user_file, "r", encoding="utf-8") as f:
                     datos = json.load(f)
 
                 user_id = datos.get("id")
@@ -107,24 +111,18 @@ class AppController:
                 print("[AppController] Error leyendo usuario_local.json:", e)
                 self.mostrar_introducir_nombre()
         else:
-            print("No existe usuario guardado → pedir nombre")
             self.mostrar_introducir_nombre()
 
     def _on_nombre_validado(self, user_id):
-        """
-        Recibe la señal desde introducirNombre cuando el usuario se crea correctamente
-        """
         print("[AppController] Usuario validado:", user_id)
 
         self.user_id = user_id
         self.nombre_jugador = user_id
         self.app_state["usuario"] = user_id
 
-        # Guardar persistencia local
         try:
-            with open("usuario_local.json", "w", encoding="utf-8") as f:
-                json.dump({"id": user_id}, f)
-            print("[AppController] usuario_local.json guardado")
+            with open(get_user_file(), "w", encoding="utf-8") as f:
+                json.dump({"id": user_id}, f, indent=4)
         except Exception as e:
             print("[AppController] Error guardando usuario_local.json:", e)
 
@@ -135,9 +133,6 @@ class AppController:
     # =========================================================
 
     def mostrar_launcher(self):
-        """
-        Muestra el launcher y oculta la ventana de introducción de nombre
-        """
         try:
             self.introducir_nombre.hide()
         except Exception:
@@ -150,9 +145,6 @@ class AppController:
         self.launcher.activateWindow()
 
     def mostrar_introducir_nombre(self):
-        """
-        Muestra la ventana de introducción de nombre
-        """
         self.introducir_nombre.setWindowModality(Qt.ApplicationModal)
         self.introducir_nombre.show()
         self.introducir_nombre.raise_()
@@ -171,12 +163,14 @@ class AppController:
     # =========================================================
 
     def abrir_nueva_partida(self):
-        """
-        Acción del botón 'Nueva partida'
-        """
         if not self.app_state.get("usuario"):
             self.mostrar_introducir_nombre()
             return
+
+        if self.juego_lanzado:
+            return
+
+        self.juego_lanzado = True
 
         try:
             self.lanzar_juego()
@@ -186,19 +180,15 @@ class AppController:
                 "Error al iniciar el juego",
                 str(e)
             )
+            self.juego_lanzado = False
 
     def lanzar_juego(self):
-        """
-        Lanza el ejecutable del juego Godot creando un token de arranque
-        """
         base_dir = get_base_dir()
 
         game_dir = os.path.join(base_dir, "game")
         runtime_dir = os.path.join(base_dir, "runtime")
-
         os.makedirs(runtime_dir, exist_ok=True)
 
-        # Crear token de lanzamiento
         token_path = os.path.join(runtime_dir, "launch_token.json")
         with open(token_path, "w", encoding="utf-8") as f:
             json.dump(
@@ -206,7 +196,8 @@ class AppController:
                     "launched_by": "launcher",
                     "user": self.app_state.get("usuario")
                 },
-                f
+                f,
+                indent=4
             )
 
         juego_exe = os.path.join(game_dir, "Juego.exe")
@@ -220,3 +211,7 @@ class AppController:
             [juego_exe],
             cwd=game_dir
         )
+
+        # Cerrar launcher definitivamente
+        self.launcher.close()
+        sys.exit(0)
