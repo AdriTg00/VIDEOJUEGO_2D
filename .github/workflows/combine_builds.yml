@@ -21,7 +21,7 @@ jobs:
         uses: dawidd6/action-download-artifact@v2
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          workflow: "Python application"
+          workflow: "Build Qt Application"
           name: "Launcher_Videojuego_exe"
           branch: main
           workflow_conclusion: success
