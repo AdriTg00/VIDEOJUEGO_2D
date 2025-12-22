@@ -1,4 +1,4 @@
-[gd_scene load_steps=72 format=3 uid="uid://dw4dstf7y1gw6"]
+[gd_scene load_steps=73 format=3 uid="uid://dw4dstf7y1gw6"]
 
 [ext_resource type="Script" uid="uid://6b5cg2s75035" path="res://Scripts/canvas_layer_nivel3.gd" id="1_qyyts"]
 [ext_resource type="Texture2D" uid="uid://de82kdu623pnf" path="res://Escenarios/Big Diamond Hit (18x14).png" id="2_bw7q8"]
@@ -15,6 +15,7 @@
 [ext_resource type="Script" uid="uid://pymxs1ckbmi2" path="res://Scripts/puerta_boss.gd" id="12_e4lui"]
 [ext_resource type="Script" uid="uid://dbkkwgl7x5eog" path="res://Scripts/trigger_puerta.gd" id="13_sagrm"]
 [ext_resource type="PackedScene" uid="uid://crggh85jlx3mc" path="res://Escenas/escenas_sueltas/rey_cerdo.tscn" id="15_sagrm"]
+[ext_resource type="PackedScene" uid="uid://bi5y1u3qbci6l" path="res://Escenas/escenas_sueltas/canvas_layer_ganador.tscn" id="16_m18tv"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_n1ln3"]
 atlas = ExtResource("2_bw7q8")
@@ -552,7 +553,7 @@ position = Vector2(432, 237)
 position = Vector2(622, 176)
 
 [node name="Rey" parent="." instance=ExtResource("11_0225b")]
-position = Vector2(881, 103)
+position = Vector2(-192, -18)
 
 [node name="Camera2D" type="Camera2D" parent="Rey"]
 position = Vector2(0, -26.065)
@@ -575,5 +576,7 @@ shape = SubResource("RectangleShape2D_m18tv")
 [node name="ReyCerdo" parent="." instance=ExtResource("15_sagrm")]
 position = Vector2(1201, 102.99999)
 scale = Vector2(1.347812, 1.347812)
+
+[node name="canvas_layer_ganador" parent="." instance=ExtResource("16_m18tv")]
 
 [connection signal="body_entered" from="trigger_puerta" to="trigger_puerta" method="_on_body_entered"]

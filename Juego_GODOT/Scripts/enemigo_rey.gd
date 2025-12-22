@@ -29,10 +29,6 @@ var vida = 10
 var velocidad_sumar := 0
 
 
-# --- Constantes ---
-
-const IMPULSO_SALTO = -400.0
-
 
 func _ready():
 	detector_area.body_entered.connect(_on_jugador_entro)
@@ -45,16 +41,22 @@ func _ready():
 func _physics_process(delta):
 	if muerto:
 		return
+
 	_aplicar_gravedad(delta)
-	
+
 	if recibiendo_daño:
 		move_and_slide()
 		return
 
 	if en_persecucion and jugador:
 		_perseguir_jugador()
+	else:
+		velocity.x = 0  # <<<<< DETENER DESPLAZAMIENTO
 
 	move_and_slide()
+
+
+	
 
 
 # --- GRAVEDAD ---
@@ -143,6 +145,8 @@ func _morir():
 	await anim.animation_finished
 	# Elimina el cerdo de la escena
 	queue_free()
+	var pantalla_ganadora = get_tree().root.get_node("Juego/canvas_layer_ganador") 
+	pantalla_ganadora.mostrar_pantalla_ganador()
 
 
 
