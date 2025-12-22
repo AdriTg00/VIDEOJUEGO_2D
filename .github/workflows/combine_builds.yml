@@ -13,8 +13,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
+   
       - name: Download Launcher artifact
         uses: dawidd6/action-download-artifact@v2
         with:
@@ -24,6 +26,7 @@ jobs:
           branch: main
           workflow_conclusion: success
           path: package/launcher
+
 
       - name: Download Godot artifact
         uses: dawidd6/action-download-artifact@v2
@@ -35,12 +38,14 @@ jobs:
           workflow_conclusion: success
           path: package/game
 
+
       - name: Combine builds
         run: |
           mkdir -p final_package
           cp package/launcher/*.exe final_package/Launcher_Videojuego.exe
           cp package/game/*.exe final_package/Juego_GODOT.exe
           cp package/game/*.pck final_package/Juego_GODOT.pck
+          echo "Build combinado el $(date)" > final_package/README.txt
           zip -r final_package/Combined_Build.zip final_package/*
 
       - name: Upload combined package

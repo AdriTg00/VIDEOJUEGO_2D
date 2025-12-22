@@ -2,54 +2,6 @@ name: Build Godot Windows EXE
 
 on:
   push:
-<<<<<<< HEAD
-<<<<<<< HEAD
-    branches: [ main ]
-  workflow_dispatch:
-
-jobs:
-  build_godot:
-    runs-on: windows-latest
-
-    steps:
-    # -----------------------------
-    # Checkout
-    # -----------------------------
-    - name: Checkout repository
-      uses: actions/checkout@v4
-
-    # -----------------------------
-    # Descargar Godot oficial
-    # -----------------------------
-    - name: Download Godot
-      run: |
-        curl -L -o godot.zip https://github.com/godotengine/godot/releases/download/4.2.1-stable/Godot_v4.2.1-stable_win64.exe.zip
-        tar -xf godot.zip
-        ren Godot_v4.2.1-stable_win64.exe godot.exe
-
-    # -----------------------------
-    # Crear carpeta de exportación
-    # -----------------------------
-    - name: Create export folder
-      run: |
-        mkdir Juego_GODOT\export
-
-    # -----------------------------
-    # Exportar juego (usa export_presets.cfg)
-    # -----------------------------
-    - name: Export Godot project
-      run: |
-        .\godot.exe --headless --path Juego_GODOT --export-release "Windows Desktop" export/Juego.exe
-
-    # -----------------------------
-    # Subir artifact del juego
-    # -----------------------------
-    - name: Upload Godot build
-      uses: actions/upload-artifact@v4
-      with:
-        name: windows-build
-        path: Juego_GODOT/export
-=======
     branches: ["main"]
 
 jobs:
@@ -58,7 +10,7 @@ jobs:
 
     env:
       GODOT_VERSION: 4.5
-      EXPORT_NAME: Juego.exe
+      EXPORT_NAME: game.exe
 
     steps:
       - name: Checkout del código
@@ -90,48 +42,6 @@ jobs:
       - name: Dar permisos
         run: chmod +x ~/godot/Godot_v4.5-stable_linux.x86_64
 
-=======
-    branches: ["main"]
-
-jobs:
-  build-windows:
-    runs-on: ubuntu-latest
-
-    env:
-      GODOT_VERSION: 4.5
-      EXPORT_NAME: Juego.exe
-
-    steps:
-      - name: Checkout del código
-        uses: actions/checkout@v4
-
-      - name: Configurar caché
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache
-          key: ${{ runner.os }}-godot-${{ env.GODOT_VERSION }}
-
-      - name: Descargar Godot headless y export templates
-        working-directory: Juego_GODOT
-        run: |
-          GODOT_VERSION=${GODOT_VERSION}
-          wget https://github.com/godotengine/godot-builds/releases/download/4.5-stable/Godot_v4.5-stable_linux.x86_64.zip
-          wget https://github.com/godotengine/godot-builds/releases/download/4.5-stable/Godot_v4.5-stable_export_templates.tpz
-          unzip Godot_v4.5-stable_linux.x86_64.zip -d ~/godot
-          mkdir -p ~/.local/share/godot/export_templates/4.5.stable/
-          unzip Godot_v4.5-stable_export_templates.tpz
-          mv templates/* ~/.local/share/godot/export_templates/4.5.stable/
-
-      - name: Instalar rcedit
-        run: |
-          wget https://github.com/electron/rcedit/releases/download/v1.1.1/rcedit-x64.exe
-          mkdir -p ~/.local/share/godot/
-          mv rcedit-x64.exe ~/.local/share/godot/rcedit.exe
-
-      - name: Dar permisos
-        run: chmod +x ~/godot/Godot_v4.5-stable_linux.x86_64
-
->>>>>>> parent of 1345fed (Update GitHub Actions workflow for Qt application build)
       - name: Verificar export templates
         run: |
           echo "Verificando templates instalados:"
@@ -139,9 +49,9 @@ jobs:
           echo "Buscando templates de Windows:"
           find ~/.local/share/godot/export_templates/4.5.stable/ -name "*windows*" -o -name "*win*"
 
-      - name: Crear estructura de carpetas
+      - name: Crear carpeta de build
         working-directory: Juego_GODOT
-        run: mkdir -p Dist/game
+        run: mkdir -p build/windows
 
       - name: Exportar a Windows (.exe)
         working-directory: Juego_GODOT
@@ -149,14 +59,10 @@ jobs:
           ~/godot/Godot_v4.5-stable_linux.x86_64 \
             --headless \
             --verbose \
-            --export-release "Windows Desktop" Dist/game/${EXPORT_NAME}
+            --export-release "Windows Desktop" build/windows/${EXPORT_NAME}
 
-      - name: Subir artefacto game
+      - name: Subir artefacto .exe
         uses: actions/upload-artifact@v4
         with:
-          name: game-build
-          path: Juego_GODOT/Dist/game/
-<<<<<<< HEAD
->>>>>>> parent of 1345fed (Update GitHub Actions workflow for Qt application build)
-=======
->>>>>>> parent of 1345fed (Update GitHub Actions workflow for Qt application build)
+          name: windows-build
+          path: Juego_GODOT/build/windows/
