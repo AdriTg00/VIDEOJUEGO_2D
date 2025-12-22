@@ -1,114 +1,88 @@
-name: Combine Game and Launcher Builds
+name: Build Dist Package
 
 on:
-  workflow_run:
-    workflows:
-      - Build Godot Windows EXE
-      - Build Qt Application
-    types:
-      - completed
+  push:
+    branches: [ main ]
 
 jobs:
-  package:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
-    runs-on: ubuntu-latest
+  build_dist:
+    runs-on: windows-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+    # -------------------------------------------------
+    # Checkout
+    # -------------------------------------------------
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
-      # Esperar a que ambos workflows hayan terminado
-      - name: Wait for both workflows
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const workflows = ['Build Qt Application', 'Build Godot Windows EXE'];
-            const branch = 'main';
-            
-            for (const workflowName of workflows) {
-              let attempts = 0;
-              const maxAttempts = 60; // 10 minutos máximo
-              
-              while (attempts < maxAttempts) {
-                const runs = await github.rest.actions.listWorkflowRunsForRepo({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  workflow_id: workflowName + '.yml',
-                  branch: branch,
-                  status: 'success',
-                  per_page: 1
-                });
-                
-                if (runs.data.workflow_runs.length > 0) {
-                  const latestRun = runs.data.workflow_runs[0];
-                  const runAge = Date.now() - new Date(latestRun.created_at).getTime();
-                  
-                  // Si el run exitoso es reciente (menos de 30 minutos)
-                  if (runAge < 30 * 60 * 1000) {
-                    console.log(`${workflowName} completed successfully`);
-                    break;
-                  }
-                }
-                
-                console.log(`Waiting for ${workflowName}... (attempt ${attempts + 1}/${maxAttempts})`);
-                await new Promise(resolve => setTimeout(resolve, 10000)); // Esperar 10 segundos
-                attempts++;
-              }
-              
-              if (attempts >= maxAttempts) {
-                throw new Error(`Timeout waiting for ${workflowName}`);
-              }
-            }
+    # -------------------------------------------------
+    # BUILD LAUNCHER (PySide / PyInstaller)
+    # -------------------------------------------------
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
 
-      - name: Download Launcher artifact
-        uses: dawidd6/action-download-artifact@v2
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          workflow: Python-app.yml
-          name: launcher-build
-          branch: main
-          workflow_conclusion: success
-          path: temp/launcher
+    - name: Install launcher dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r Ventana_Principal_TFG/requirements.txt
+        pip install pyinstaller
 
-      - name: Download Godot artifact
-        uses: dawidd6/action-download-artifact@v2
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          workflow: build_godot.yml
-          name: game-build
-          branch: main
-          workflow_conclusion: success
-          path: temp/game
+    - name: Build Launcher
+      run: |
+        cd Ventana_Principal_TFG
+        pyinstaller --noconfirm --onefile --windowed main.py --name Launcher
+        cd ..
 
-      - name: Create Dist structure
-        run: |
-          mkdir -p Dist/game
-          mkdir -p Dist/runtime
-          mkdir -p Dist/config
-          
-          # Copiar Launcher a raíz de Dist
-          cp temp/launcher/Launcher.exe Dist/
-          
-          # Copiar game files a Dist/game
-          cp temp/game/*.exe Dist/game/Juego.exe
-          cp temp/game/*.pck Dist/game/Juego.pck
-          
-          # Crear README
-          echo "Build combinado el $(date)" > Dist/README.txt
-          echo "" >> Dist/README.txt
-          echo "Estructura:" >> Dist/README.txt
-          echo "- Launcher.exe: Ejecuta este archivo para iniciar el juego" >> Dist/README.txt
-          echo "- game/: Contiene los archivos del juego" >> Dist/README.txt
-          echo "- runtime/: (Vacío por ahora)" >> Dist/README.txt
-          echo "- config/: (Vacío por ahora)" >> Dist/README.txt
+    # -------------------------------------------------
+    # BUILD GODOT GAME (CLI OFICIAL)
+    # -------------------------------------------------
+    - name: Download Godot
+      run: |
+        curl -L -o godot.zip https://github.com/godotengine/godot/releases/download/4.2.1-stable/Godot_v4.2.1-stable_win64.exe.zip
+        tar -xf godot.zip
+        ren Godot_v4.2.1-stable_win64.exe godot.exe
 
-      - name: Create ZIP package
-        run: |
-          cd Dist
-          zip -r ../Combined_Build.zip ./*
+    - name: Export Godot game
+      run: |
+        .\godot.exe --headless --path Juego_GODOT --export-release "Windows Desktop" export/Juego.exe
 
-      - name: Upload combined package
-        uses: actions/upload-artifact@v4
-        with:
-          name: Combined_Game_and_Launcher
-          path: Combined_Build.zip
+    # -------------------------------------------------
+    # CREATE DIST STRUCTURE
+    # -------------------------------------------------
+    - name: Create Dist folder structure
+      run: |
+        mkdir Dist
+        mkdir Dist\game
+        mkdir Dist\runtime
+        mkdir Dist\config
+        mkdir Dist\saves
+
+    # -------------------------------------------------
+    # COPY FILES
+    # -------------------------------------------------
+    - name: Copy Launcher
+      run: |
+        copy Ventana_Principal_TFG\dist\Launcher.exe Dist\Launcher.exe
+
+    - name: Copy Godot game
+      run: |
+        xcopy Juego_GODOT\export\* Dist\game\ /E /I /Y
+
+    - name: Copy user config if exists
+      run: |
+        if exist usuario_local.json (
+          copy usuario_local.json Dist\config\usuario_local.json
+        ) else (
+          echo {} > Dist\config\usuario_local.json
+        )
+
+    # -------------------------------------------------
+    # UPLOAD FINAL PACKAGE
+    # -------------------------------------------------
+    - name: Upload Dist Package
+      uses: actions/upload-artifact@v4
+      with:
+        name: Dist_Package
+        path: Dist
