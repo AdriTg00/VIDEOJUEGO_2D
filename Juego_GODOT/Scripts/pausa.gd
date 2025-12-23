@@ -7,8 +7,7 @@ extends CanvasLayer
 @onready var btn_guardar := $VBoxContainer/guardar
 
 var http: HTTPRequest
-var player = get_tree().get_first_node_in_group("player")
-
+var player: Node2D = null
 
 
 func _ready():
@@ -22,6 +21,13 @@ func _ready():
 	http = HTTPRequest.new()
 	add_child(http)
 	http.request_completed.connect(_on_request_completed)
+
+	# 🔒 Esperamos a que el árbol esté listo
+	await get_tree().process_frame
+	player = get_tree().get_first_node_in_group("player")
+
+	if player == null:
+		push_warning("PAUSA: No se encontró el nodo 'player' en el grupo 'player'")
 
 
 func _unhandled_input(event):
@@ -43,36 +49,44 @@ func _on_guardar_pressed():
 	print("DEBUG | launched_by_launcher =", LaunchToken.launched_by_launcher)
 	print("DEBUG | user =", LaunchToken.user_name)
 
+	if player == null:
+		push_error("No se puede guardar: player no existe")
+		return
+
 	if LaunchToken.launched_by_launcher:
-		var url := "https://flask-server-9ymz.onrender.com/partidas/guardar"
-
-		var data := {
-			"jugador_id": LaunchToken.user_name,
-			"nivel": Global.nivel,
-			"tiempo": Global.get_tiempo_total(),
-			"puntuacion": Global.get_puntuacion_total(),
-			"muertes_nivel": Global.death_count,
-			"pos_x": player.global_position.x,
-			"pos_y": player.global_position.y,
-			"tipo": "guardado"
-		}
-
-		var json_data := JSON.stringify(data)
-		var headers := ["Content-Type: application/json"]
-
-		var err := http.request(
-			url,
-			headers,
-			HTTPClient.METHOD_POST,
-			json_data
-		)
-
-		if err != OK:
-			print("Error enviando guardado:", err)
-		else:
-			print("Guardado enviado al servidor")
+		guardar_remoto()
 	else:
 		guardar_local()
+
+
+func guardar_remoto():
+	var url := "https://flask-server-9ymz.onrender.com/partidas/guardar"
+
+	var data := {
+		"jugador_id": LaunchToken.user_name,
+		"nivel": Global.nivel,
+		"tiempo": Global.get_tiempo_total(),
+		"puntuacion": Global.get_puntuacion_total(),
+		"muertes_nivel": Global.death_count,
+		"pos_x": player.global_position.x,
+		"pos_y": player.global_position.y,
+		"tipo": "guardado"
+	}
+
+	var json_data := JSON.stringify(data)
+	var headers := ["Content-Type: application/json"]
+
+	var err := http.request(
+		url,
+		headers,
+		HTTPClient.METHOD_POST,
+		json_data
+	)
+
+	if err != OK:
+		push_error("Error enviando guardado remoto: %s" % err)
+	else:
+		print("Guardado enviado al servidor")
 
 
 func guardar_local():
@@ -93,9 +107,6 @@ func guardar_local():
 	print("Partida guardada LOCALMENTE en:", path)
 
 
-
-
-
 func _on_request_completed(result, response_code, headers, body):
 	var response = body.get_string_from_utf8()
 	print("Respuesta servidor:", response_code, response)
@@ -103,7 +114,7 @@ func _on_request_completed(result, response_code, headers, body):
 	if response_code == 200:
 		print("Partida guardada correctamente")
 	else:
-		print("Error al guardar partida")
+		push_error("Error al guardar partida remota")
 
 
 func _on_reanudar_pressed():

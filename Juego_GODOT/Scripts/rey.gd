@@ -247,28 +247,31 @@ func _reproducir_aterrizaje():
 func _aplicar_retroceso():
 	var direccion = -1 if anim.flip_h else 1
 	velocity.x = direccion * -IMPULSO_RETROCESO
+	
+	
+func _aplicar_carga_partida():
+	if not (LaunchToken.load_partida is Dictionary):
+		return
 
-func _ready():
-	if LaunchToken.load_partida.size() > 0 \
-	and LaunchToken.load_partida.has("pos_x") \
-	and LaunchToken.load_partida.has("pos_y"):
+	if LaunchToken.load_partida.is_empty():
+		print("Inicio normal (sin carga)")
+		return
 
-		print("Cargando partida desde launcher")
+	print("Cargando partida desde launcher")
 
-		Global.nivel = LaunchToken.load_partida.get("nivel", 1)
-		Global.death_count = LaunchToken.load_partida.get("muertes_nivel", 0)
-		Global.set_puntuacion(LaunchToken.load_partida.get("puntuacion", 0))
-		Global.set_tiempo(LaunchToken.load_partida.get("tiempo", 0))
+	Global.nivel = LaunchToken.load_partida.get("nivel", 1)
+	Global.death_count = LaunchToken.load_partida.get("muertes_nivel", 0)
+	Global.set_puntuacion(LaunchToken.load_partida.get("puntuacion", 0))
+	Global.set_tiempo(LaunchToken.load_partida.get("tiempo", 0))
 
-		global_position = Vector2(
+	global_position = Vector2(
 		LaunchToken.load_partida.get("pos_x", global_position.x),
 		LaunchToken.load_partida.get("pos_y", global_position.y)
-		)
-	else:
-		print("Nueva partida → valores por defecto")
+	)
 
+func _ready():
+	call_deferred("_aplicar_carga_partida")
 	musica.play()
-
 	en_secuencia_puerta = true
 	anim.play("door_out")
 	await anim.animation_finished
