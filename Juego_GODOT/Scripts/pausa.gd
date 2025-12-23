@@ -38,35 +38,58 @@ func _toggle_pause():
 
 
 func _on_guardar_pressed():
-	if not LaunchToken.launched_by_launcher:
-		print("Guardado deshabilitado: juego no iniciado desde launcher")
-		return
+	print("DEBUG | launched_by_launcher =", LaunchToken.launched_by_launcher)
+	print("DEBUG | user =", LaunchToken.user_name)
 
-	var url := "https://flask-server-9ymz.onrender.com/partidas/guardar"
+	if LaunchToken.launched_by_launcher:
+		var url := "https://flask-server-9ymz.onrender.com/partidas/guardar"
 
+		var data := {
+			"jugador_id": LaunchToken.user_name,
+			"nivel": Global.nivel,
+			"tiempo": Global.get_tiempo_total(),
+			"puntuacion": Global.get_puntuacion_total(),
+			"muertes_nivel": Global.death_count,
+			"tipo": "guardado"
+		}
+
+		var json_data := JSON.stringify(data)
+		var headers := ["Content-Type: application/json"]
+
+		var err := http.request(
+			url,
+			headers,
+			HTTPClient.METHOD_POST,
+			json_data
+		)
+
+		if err != OK:
+			print("Error enviando guardado:", err)
+		else:
+			print("Guardado enviado al servidor")
+	else:
+		guardar_local()
+
+
+func guardar_local():
 	var data := {
 		"jugador_id": LaunchToken.user_name,
 		"nivel": Global.nivel,
 		"tiempo": Global.get_tiempo_total(),
 		"puntuacion": Global.get_puntuacion_total(),
 		"muertes_nivel": Global.death_count,
-		"tipo": "guardado"
+		"tipo": "local"
 	}
 
-	var json_data := JSON.stringify(data)
-	var headers := ["Content-Type: application/json"]
+	var path := "user://partida_local.json"
+	var file := FileAccess.open(path, FileAccess.WRITE)
+	file.store_string(JSON.stringify(data, "\t"))
+	file.close()
 
-	var err := http.request(
-		url,
-		headers,
-		HTTPClient.METHOD_POST,
-		json_data
-	)
+	print("💾 Partida guardada LOCALMENTE en:", path)
 
-	if err != OK:
-		print("Error enviando guardado:", err)
-	else:
-		print("Guardado enviado al servidor")
+
+
 
 
 func _on_request_completed(result, response_code, headers, body):
