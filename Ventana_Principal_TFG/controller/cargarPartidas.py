@@ -1,4 +1,5 @@
 from functools import partial
+from PySide6.QtCore import Qt
 from PySide6.QtCore import Signal
 from PySide6.QtWidgets import QWidget, QMessageBox
 from views.partidasGuardadas_ui import Ui_partidaGuardada
@@ -54,16 +55,16 @@ class cargar(QWidget):
         tabla.setRowCount(0)
 
         for fila, partida in enumerate(partidas):
-            tabla.insertRow(fila)
+            self.ui.tablaGuardados.setItem(fila, 0, QTableWidgetItem(partida["nivel"]))
+            self.ui.tablaGuardados.setItem(fila, 1, QTableWidgetItem(str(partida["muertes_nivel"])))
+            self.ui.tablaGuardados.setItem(fila, 2, QTableWidgetItem(str(partida["puntuacion"])))
+            self.ui.tablaGuardados.setItem(fila, 3, QTableWidgetItem(str(partida["tiempo"])))
 
-            tabla.setItem(fila, 0, QTableWidgetItem(jugador))
-            tabla.setItem(fila, 1, QTableWidgetItem(str(partida.nivel)))
-            tabla.setItem(fila, 2, QTableWidgetItem(str(partida.muertes_nivel)))
-            tabla.setItem(fila, 3, QTableWidgetItem(str(partida.puntuacion)))
-            tabla.setItem(fila, 4, QTableWidgetItem(self._formatear_tiempo(partida.tiempo)))
-
-            # Guardamos el ID oculto en la fila
-            tabla.item(fila, 0).setData(256, partida.id_partida)
+            # Guardas el ID internamente (NO visible)
+            self.ui.tablaGuardados.item(fila, 0).setData(
+                Qt.UserRole,
+                partida["id"]
+            )
             
     def _formatear_tiempo(self, segundos):
         if not segundos:
@@ -75,7 +76,7 @@ class cargar(QWidget):
     
     def _on_partida_doble_click(self, item):
         fila = item.row()
-        item_id = self.ui.tablePartidas.item(fila, 0)
+        item_id = self.ui.tablaGuardados.item(fila, 0)
         partida_id = item_id.data(256)
 
         self.partida_seleccionada.emit(partida_id)
