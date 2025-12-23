@@ -1,7 +1,8 @@
 extends Node
 
+var launch_data := {}
 var launched_by_launcher := false
-var user_name: String = "LOCAL_DEV"
+var user_name: String
 
 
 func _ready():
@@ -13,21 +14,27 @@ func leer_launch_token():
 	var token_path := base_dir.path_join("runtime").path_join("launch_token.json")
 
 	if not FileAccess.file_exists(token_path):
-		print("Modo desarrollo / ejecución directa")
-		launched_by_launcher = false
-		user_name = "LOCAL_DEV"
+		print("No se encontró launch_token.json (ejecución directa)")
 		return
 
 	var file := FileAccess.open(token_path, FileAccess.READ)
 	if file == null:
+		print("No se pudo abrir launch_token.json")
 		return
+
+	var content := file.get_as_text()
+	file.close()
 
 	var json := JSON.new()
-	if json.parse(file.get_as_text()) != OK:
+	var err := json.parse(content)
+
+	if err != OK:
+		print("Error parseando JSON:", json.get_error_message())
 		return
 
-	var data = json.data
-	launched_by_launcher = data.get("launched_by") == "launcher"
-	user_name = data.get("user", "LOCAL_DEV")
+	launch_data = json.data
+	launched_by_launcher = launch_data.get("launched_by") == "launcher"
+	user_name = launch_data.get("user")
 
-	print("Modo launcher | Usuario:", user_name)
+	print("Juego lanzado por launcher:", launched_by_launcher)
+	print("Usuario:", user_name)

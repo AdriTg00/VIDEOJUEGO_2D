@@ -38,6 +38,10 @@ func _toggle_pause():
 
 
 func _on_guardar_pressed():
+	if not LaunchToken.launched_by_launcher:
+		print("Guardado deshabilitado: juego no iniciado desde launcher")
+		return
+
 	var url := "https://flask-server-9ymz.onrender.com/partidas/guardar"
 
 	var data := {
