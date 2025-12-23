@@ -270,6 +270,7 @@ func _aplicar_carga_partida():
 	)
 
 func _ready():
+	add_to_group("player")
 	call_deferred("_aplicar_carga_partida")
 	musica.play()
 	en_secuencia_puerta = true

@@ -7,10 +7,13 @@ extends CanvasLayer
 @onready var btn_guardar := $VBoxContainer/guardar
 
 var http: HTTPRequest
-var player: Node2D = null
+var player: Node2D
 
 
 func _ready():
+	# ⚠️ Aseguramos que el juego ARRANCA sin pausa
+	get_tree().paused = false
+
 	color_rect.visible = false
 	vbox.visible = false
 
@@ -19,7 +22,7 @@ func _ready():
 	btn_guardar.pressed.connect(_on_guardar_pressed)
 
 	http = HTTPRequest.new()
-	http.process_mode = Node.PROCESS_MODE_ALWAYS  # 🔥 CLAVE
+	http.process_mode = Node.PROCESS_MODE_ALWAYS
 	add_child(http)
 	http.request_completed.connect(_on_request_completed)
 
@@ -29,7 +32,7 @@ func _ready():
 func _buscar_player():
 	player = get_tree().get_first_node_in_group("player")
 	if player == null:
-		push_warning("PAUSA: No se encontró el nodo 'player'")
+		push_error("PAUSA: No se encontró el player (grupo 'player')")
 
 
 func _unhandled_input(event):
@@ -55,19 +58,15 @@ func _on_guardar_pressed():
 		push_error("No se puede guardar: player no existe")
 		return
 
-	# ⛔ Despausamos temporalmente para permitir HTTP
-	get_tree().paused = false
-
 	if LaunchToken.launched_by_launcher:
 		guardar_remoto()
 	else:
 		guardar_local()
 
-	# ⏸ Volvemos a pausar
-	get_tree().paused = true
-
 
 func guardar_remoto():
+	print("→ GUARDADO REMOTO")
+
 	var url := "https://flask-server-9ymz.onrender.com/partidas/guardar"
 
 	var data := {
@@ -81,21 +80,22 @@ func guardar_remoto():
 		"tipo": "guardado"
 	}
 
-	var headers := ["Content-Type: application/json"]
 	var err := http.request(
 		url,
-		headers,
+		["Content-Type: application/json"],
 		HTTPClient.METHOD_POST,
 		JSON.stringify(data)
 	)
 
 	if err != OK:
-		push_error("Error enviando guardado remoto: %s" % err)
+		push_error("Error enviando guardado remoto")
 	else:
 		print("Guardado remoto enviado")
 
 
 func guardar_local():
+	print("→ GUARDADO LOCAL")
+
 	var data := {
 		"jugador_id": LaunchToken.user_name,
 		"nivel": Global.nivel,
@@ -105,21 +105,15 @@ func guardar_local():
 		"tipo": "local"
 	}
 
-	var path := "user://partida_local.json"
-	var file := FileAccess.open(path, FileAccess.WRITE)
+	var file := FileAccess.open("user://partida_local.json", FileAccess.WRITE)
 	file.store_string(JSON.stringify(data, "\t"))
 	file.close()
 
-	print("Partida guardada LOCALMENTE en:", path)
+	print("Partida guardada LOCALMENTE")
 
 
 func _on_request_completed(result, response_code, headers, body):
 	print("Respuesta servidor:", response_code, body.get_string_from_utf8())
-
-	if response_code == 200:
-		print("Partida guardada correctamente")
-	else:
-		push_error("Error al guardar partida remota")
 
 
 func _on_reanudar_pressed():
