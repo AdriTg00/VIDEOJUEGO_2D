@@ -86,7 +86,7 @@ func guardar_local():
 	file.store_string(JSON.stringify(data, "\t"))
 	file.close()
 
-	print("💾 Partida guardada LOCALMENTE en:", path)
+	print("Partida guardada LOCALMENTE en:", path)
 
 
 
@@ -94,7 +94,7 @@ func guardar_local():
 
 func _on_request_completed(result, response_code, headers, body):
 	var response = body.get_string_from_utf8()
-	print("📥 Respuesta servidor:", response_code, response)
+	print("Respuesta servidor:", response_code, response)
 
 	if response_code == 200:
 		print("Partida guardada correctamente")

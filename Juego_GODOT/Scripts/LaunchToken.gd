@@ -7,11 +7,12 @@ func _ready():
 	leer_launch_token()
 
 func leer_launch_token():
-	var base_dir := OS.get_executable_path().get_base_dir()
-	var token_path := base_dir.path_join("runtime").path_join("launch_token.json")
+	var exe_dir := OS.get_executable_path().get_base_dir()
+	var root_dir := exe_dir.get_base_dir()
+	var token_path := root_dir.path_join("runtime").path_join("launch_token.json")
 
 	if not FileAccess.file_exists(token_path):
-		print("ℹ️ No hay launch token → modo local")
+		print("No hay launch token → modo local")
 		launched_by_launcher = false
 		user_name = "LOCAL_DEV"
 		return
