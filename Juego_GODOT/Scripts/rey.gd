@@ -185,6 +185,9 @@ func _morir():
 	anim.play("dead")
 	velocity.x = 0
 	print("El rey ha muerto")
+	Global.score_nivel1 = 0
+	Global.score_nivel2 = 0
+	Global.score_nivel3 = 0
 	var pantalla_muerte = get_tree().root.get_node("Juego/canvas_layer_dead")  # cambia por tu ruta real
 	pantalla_muerte.mostrar_pantalla_muerte()
 	var hud = get_tree().root.get_node("Juego/CanvasLayer")
