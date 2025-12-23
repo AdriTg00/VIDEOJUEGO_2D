@@ -3,6 +3,8 @@ extends Node
 var launch_data := {}
 var launched_by_launcher := false
 var user_name: String
+var debug_allow_save := false
+
 
 
 func _ready():
@@ -15,6 +17,10 @@ func leer_launch_token():
 
 	if not FileAccess.file_exists(token_path):
 		print("No se encontró launch_token.json (ejecución directa)")
+		if debug_allow_save:
+			launched_by_launcher = true
+			user_name = "DEBUG_USER"
+			print("⚠ MODO DEBUG: Guardado permitido sin launcher")
 		return
 
 	var file := FileAccess.open(token_path, FileAccess.READ)
