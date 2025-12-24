@@ -209,12 +209,12 @@ QScrollBar::sub-line:vertical {
         </column>
         <column>
          <property name="text">
-          <string>Puntuacion</string>
+          <string>Tiempo</string>
          </property>
         </column>
         <column>
          <property name="text">
-          <string>Tiempo</string>
+          <string>Puntuacion</string>
          </property>
         </column>
         <column>

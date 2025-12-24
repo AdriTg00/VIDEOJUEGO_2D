@@ -193,9 +193,9 @@ class Ui_partidaGuardada(object):
         ___qtablewidgetitem2 = self.tablaGuardados.horizontalHeaderItem(2)
         ___qtablewidgetitem2.setText(QCoreApplication.translate("partidaGuardada", u"Muertes", None));
         ___qtablewidgetitem3 = self.tablaGuardados.horizontalHeaderItem(3)
-        ___qtablewidgetitem3.setText(QCoreApplication.translate("partidaGuardada", u"Puntuacion", None));
+        ___qtablewidgetitem3.setText(QCoreApplication.translate("partidaGuardada", u"Tiempo", None));
         ___qtablewidgetitem4 = self.tablaGuardados.horizontalHeaderItem(4)
-        ___qtablewidgetitem4.setText(QCoreApplication.translate("partidaGuardada", u"Tiempo", None));
+        ___qtablewidgetitem4.setText(QCoreApplication.translate("partidaGuardada", u"Puntuacion", None));
         ___qtablewidgetitem5 = self.tablaGuardados.horizontalHeaderItem(5)
         ___qtablewidgetitem5.setText(QCoreApplication.translate("partidaGuardada", u"Fecha", None));
         ___qtablewidgetitem6 = self.tablaGuardados.horizontalHeaderItem(6)
