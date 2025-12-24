@@ -42,7 +42,7 @@ class AppController:
             "language": "Español",
             "usuario": None
         }
-
+        self._cargar_usuario_local()
         self.user_id = None
         self.juego_lanzado = False
 
@@ -179,3 +179,20 @@ class AppController:
 
         #Cerrar SOLO el launcher
         self.launcher.close()
+        
+    def _cargar_usuario_local(self):
+        user_file = get_user_file()
+
+        if os.path.exists(user_file):
+            try:
+                with open(user_file, "r", encoding="utf-8") as f:
+                    datos = json.load(f)
+
+                user_id = datos.get("id")
+                self.app_state["usuario"] = user_id
+                self.user_id = user_id
+                self.nombre_jugador = user_id
+
+            except Exception:
+                pass
+
