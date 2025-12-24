@@ -9,7 +9,7 @@ class PartidasDAO:
         self.default_timeout = 25
 
     def obtener_partidas(self, nombre):
-        r = self.session.get(f"{BASE_URL}/jugadores/{nombre}/partidas", timeout=self.default_timeout)
+        r = self.session.get( f"{BASE_URL}/partidas/obtener",params={"jugador": nombre},timeout=self.default_timeout)
         r.raise_for_status()
         return r.json()
 
