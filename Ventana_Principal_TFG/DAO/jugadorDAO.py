@@ -20,11 +20,11 @@ class JugadorDAO:
         # Si tu backend devuelve algo particular, ajusta aquí
         return resp.json()
 
-    def obtener(self, user_id: str):
-        resp = self.session.get(
-            f"{BASE_URL}/jugadores/obtener",
-            params={"id": user_id},
+    def obtener_partidas(self, jugador_id):
+        r = self.session.get(
+            f"{BASE_URL}/partidas/{jugador_id}",
             timeout=self.default_timeout
         )
-        resp.raise_for_status()
-        return resp.json()
+        r.raise_for_status()
+        return r.json()
+
