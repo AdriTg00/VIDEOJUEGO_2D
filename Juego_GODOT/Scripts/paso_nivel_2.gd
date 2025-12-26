@@ -6,6 +6,7 @@ func _ready():
 	
 
 func _on_puerta_jugador_entro():
+	
 	# Aquí cargamos el segundo nivel
 	get_tree().change_scene_to_file("res://Escenas/segundo_nivel.tscn")
 

@@ -250,6 +250,9 @@ func _aplicar_retroceso():
 	
 	
 func _aplicar_carga_partida():
+	print("REY | aplicar_carga_partida()")
+	print("REY | load_partida:", LaunchToken.load_partida)
+
 	if LaunchToken.load_partida.is_empty():
 		return
 
@@ -262,8 +265,15 @@ func _aplicar_carga_partida():
 		LaunchToken.load_partida.get("pos_x", global_position.x),
 		LaunchToken.load_partida.get("pos_y", global_position.y)
 	)
+	print("REY | Posición aplicada:", global_position)
+	print("REY | Nivel:", Global.nivel)
+	print("REY | Tiempo:", Global.get_tiempo_total())
+	print("REY | Muertes:", Global.death_count)
+
 
 func _ready():
+	print("REY | Ready en escena:", get_tree().current_scene.name)
+
 	add_to_group("player")
 	_aplicar_carga_partida()
 	musica.play()
