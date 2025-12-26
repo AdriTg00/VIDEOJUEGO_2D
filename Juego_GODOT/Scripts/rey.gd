@@ -250,14 +250,8 @@ func _aplicar_retroceso():
 	
 	
 func _aplicar_carga_partida():
-	if not (LaunchToken.load_partida is Dictionary):
-		return
-
 	if LaunchToken.load_partida.is_empty():
-		print("Inicio normal (sin carga)")
 		return
-
-	print("Cargando partida desde launcher")
 
 	Global.nivel = LaunchToken.load_partida.get("nivel", 1)
 	Global.death_count = LaunchToken.load_partida.get("muertes_nivel", 0)
@@ -271,7 +265,7 @@ func _aplicar_carga_partida():
 
 func _ready():
 	add_to_group("player")
-	call_deferred("_aplicar_carga_partida")
+	_aplicar_carga_partida()
 	musica.play()
 	en_secuencia_puerta = true
 	anim.play("door_out")

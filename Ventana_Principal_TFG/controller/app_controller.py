@@ -2,7 +2,7 @@ from .VentanaInicio import launcher
 from .cargarPartidas import cargar
 from .configuracion import configuracion
 from .introduccionNombre import introducirNombre
-
+from services.partidaService import PartidasService
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QMessageBox
 
@@ -74,7 +74,7 @@ class AppController:
 
         # CLAVE: conectar selección de partida
         self.carg_partidas.partida_seleccionada.connect(
-            self._on_partida_seleccionada
+            self._cargar_partida_y_lanzar
         )
 
         # -----------------------------
@@ -174,16 +174,19 @@ class AppController:
             self.juego_lanzado = False
 
     def _on_partida_seleccionada(self, partida_id):
-        if self.juego_lanzado:
-            return
+       
 
-        self.juego_lanzado = True
+        service = PartidasService()
+        jugador = self.app_state["usuario"]
 
         try:
-            self._lanzar_juego(partida_id)
+            partidas = service.obtener_partidas(jugador)
+            partida = next(p for p in partidas if p["id"] == partida_id)
         except Exception as e:
             QMessageBox.critical(self.launcher, "Error", str(e))
-            self.juego_lanzado = False
+            return
+
+        self._lanzar_juego_con_partida(partida)
 
     # =========================================================
     # LANZAR JUEGO

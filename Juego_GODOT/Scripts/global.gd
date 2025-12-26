@@ -1,4 +1,5 @@
 extends Node
+
 var death_count := 0
 var tiempo_total_nivel1 := 0.0
 var tiempo_total_nivel2 := 0.0
