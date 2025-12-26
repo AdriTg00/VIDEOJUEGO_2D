@@ -74,7 +74,7 @@ class AppController:
 
         # CLAVE: conectar selección de partida
         self.carg_partidas.partida_seleccionada.connect(
-            self._cargar_partida_y_lanzar
+            self._on_partida_seleccionada
         )
 
         # -----------------------------
@@ -191,6 +191,31 @@ class AppController:
     # =========================================================
     # LANZAR JUEGO
     # =========================================================
+    def _lanzar_juego_con_partida(self, partida):
+        base_dir = get_base_dir()
+
+        game_dir = os.path.join(base_dir, "game")
+        runtime_dir = os.path.join(base_dir, "runtime")
+        os.makedirs(runtime_dir, exist_ok=True)
+
+        token_path = os.path.join(runtime_dir, "launch_token.json")
+        with open(token_path, "w", encoding="utf-8") as f:
+            json.dump(
+                {
+                    "launched_by": "launcher",
+                    "user": self.app_state["usuario"],
+                    "load_partida": partida
+                },
+                f,
+                indent=4
+            )
+
+        juego_exe = os.path.join(game_dir, "Juego.exe")
+        subprocess.Popen([juego_exe], cwd=game_dir)
+
+        self.launcher.close()
+
+    
 
     def _lanzar_juego(self, partida_id=None):
         base_dir = get_base_dir()
