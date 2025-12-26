@@ -248,34 +248,17 @@ func _aplicar_retroceso():
 	var direccion = -1 if anim.flip_h else 1
 	velocity.x = direccion * -IMPULSO_RETROCESO
 	
-	
-func _aplicar_carga_partida():
-	print("REY | aplicar_carga_partida()")
-	print("REY | load_partida:", LaunchToken.load_partida)
-
-	if LaunchToken.load_partida.is_empty():
-		return
-
-	Global.nivel = LaunchToken.load_partida.get("nivel", 1)
-	Global.death_count = LaunchToken.load_partida.get("muertes_nivel", 0)
-	Global.set_puntuacion(LaunchToken.load_partida.get("puntuacion", 0))
-	Global.set_tiempo(LaunchToken.load_partida.get("tiempo", 0))
-
-	global_position = Vector2(
-		LaunchToken.load_partida.get("pos_x", global_position.x),
-		LaunchToken.load_partida.get("pos_y", global_position.y)
-	)
-	print("REY | Posición aplicada:", global_position)
-	print("REY | Nivel:", Global.nivel)
-	print("REY | Tiempo:", Global.get_tiempo_total())
-	print("REY | Muertes:", Global.death_count)
 
 
 func _ready():
 	print("REY | Ready en escena:", get_tree().current_scene.name)
 
 	add_to_group("player")
-	_aplicar_carga_partida()
+	if GameManager.partida.size() > 0:
+		global_position = Vector2(
+			GameManager.partida.get("pos_x", global_position.x),
+			GameManager.partida.get("pos_y", global_position.y)
+		)
 	musica.play()
 	en_secuencia_puerta = true
 	anim.play("door_out")

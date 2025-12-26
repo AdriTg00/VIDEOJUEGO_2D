@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 Global="*res://Scripts/global.gd"
 LaunchToken="*res://Scripts/LaunchToken.gd"
+GameManager="*res://Scripts/GameManager.gd"
 
 [input]
 
