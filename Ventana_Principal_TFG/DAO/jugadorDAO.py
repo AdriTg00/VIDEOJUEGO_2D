@@ -8,7 +8,7 @@ class JugadorDAO:
         # Reutilizamos la sesión para keep-alive y menor latencia
         self.session = requests.Session()
         # Timeout por defecto para todas las peticiones (segundos)
-        self.default_timeout = 25
+        self.default_timeout = 60
 
     def crear_usuario(self, nombre: str):
         resp = self.session.post(

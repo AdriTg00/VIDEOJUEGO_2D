@@ -211,6 +211,12 @@ class AppController:
             )
 
         juego_exe = os.path.join(game_dir, "Juego.exe")
+        #Prueba
+        print("[LAUNCHER] Lanzando juego")
+        print("[LAUNCHER] Usuario:", self.app_state["usuario"])
+        print("[LAUNCHER] Load partida:", partida)
+        print("[LAUNCHER] Token path:", token_path)
+
         subprocess.Popen([juego_exe], cwd=game_dir)
 
         self.launcher.close()
