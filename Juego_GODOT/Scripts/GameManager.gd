@@ -43,7 +43,7 @@ func _enviar_estadisticas_jugador(datos: Dictionary):
 	var body = JSON.stringify(datos)
 
 	http.request(
-		"https://flask-server-9ymz.onrender.com/api/jugadores/estadisticas",
+		"https://flask-server-9ymz.onrender.com/jugadores/estadisticas",
 		headers,
 		HTTPClient.METHOD_POST,
 		body
