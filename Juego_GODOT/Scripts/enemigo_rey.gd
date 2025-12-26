@@ -129,6 +129,7 @@ func recibir_dano(cantidad: int = 1):
 
 func _morir():
 	muerto = true
+	GameManager.fin_de_juego()
 	en_persecucion = false
 	var hud = get_tree().root.get_node("Juego/CanvasLayer")
 	hud.añadir_moneda(3)
@@ -147,6 +148,7 @@ func _morir():
 	queue_free()
 	var pantalla_ganadora = get_tree().root.get_node("Juego/canvas_layer_ganador") 
 	pantalla_ganadora.mostrar_pantalla_ganador()
+	
 
 
 

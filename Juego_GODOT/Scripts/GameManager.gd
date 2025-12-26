@@ -16,3 +16,35 @@ func aplicar_partida(partida_data: Dictionary):
 	Global.score_nivel1 = int(partida.get("puntuacion", 0))
 	Global.score_nivel2 = 0
 	Global.score_nivel3 = 0
+
+func fin_de_juego():
+	var datos := {
+		"jugador_id": LaunchToken.user_name,
+		"tiempo_total": Global.get_tiempo_total(),
+		"puntuacion_total": Global.get_puntuacion_total(),
+		"niveles_superados": 3
+	}
+
+	print("FIN DE JUEGO | Enviando estadísticas:", datos)
+
+	_enviar_estadisticas_jugador(datos)
+
+func _enviar_estadisticas_jugador(datos: Dictionary):
+	var http := HTTPRequest.new()
+	add_child(http)
+
+	http.request_completed.connect(_on_estadisticas_enviadas)
+
+	var headers = ["Content-Type: application/json"]
+	var body = JSON.stringify(datos)
+
+	http.request(
+		"https://flask-server-9ymz.onrender.com/api/jugadores/estadisticas",
+		headers,
+		HTTPClient.METHOD_POST,
+		body
+	)
+	
+func _on_estadisticas_enviadas(result, response_code, headers, body):
+	print("API RESPUESTA | código:", response_code)
+	print("API RESPUESTA | body:", body.get_string_from_utf8())
