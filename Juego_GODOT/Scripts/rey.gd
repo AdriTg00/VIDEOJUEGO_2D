@@ -254,11 +254,19 @@ func _ready():
 	print("REY | Ready en escena:", get_tree().current_scene.name)
 
 	add_to_group("player")
-	if GameManager.partida.size() > 0:
+
+	if GameManager.partida_cargada:
+		print("REY | Aplicando posición de partida cargada")
+
 		global_position = Vector2(
 			GameManager.partida.get("pos_x", global_position.x),
 			GameManager.partida.get("pos_y", global_position.y)
 		)
+
+		GameManager.partida_cargada = false
+	else:
+		print("REY | Spawn normal del nivel")
+
 	musica.play()
 	en_secuencia_puerta = true
 	anim.play("door_out")

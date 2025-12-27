@@ -2,6 +2,8 @@ extends Node
 
 var partida := {}
 var fin_ejecutado := false
+var partida_cargada := false
+
 
 func aplicar_partida(partida_data: Dictionary):
 	partida = partida_data
@@ -9,7 +11,7 @@ func aplicar_partida(partida_data: Dictionary):
 	Global.nivel = int(partida.get("nivel", 1))
 	Global.death_count = int(partida.get("muertes_nivel", 0))
 
-	# Tiempo TOTAL (ajústalo luego por nivel)
+	# Tiempo TOTAL 
 	Global.tiempo_total_nivel1 = float(partida.get("tiempo", 0))
 	Global.tiempo_total_nivel2 = 0
 	Global.tiempo_total_nivel3 = 0
