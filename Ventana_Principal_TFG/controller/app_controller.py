@@ -182,6 +182,11 @@ class AppController:
     # =========================================================
 
     def _lanzar_juego_con_partida(self, partida: dict):
+        if self.juego_lanzado:
+            return
+
+        self.juego_lanzado = True
+
         base_dir = get_base_dir()
         game_dir = os.path.join(base_dir, "game")
         runtime_dir = os.path.join(base_dir, "runtime")
@@ -192,20 +197,24 @@ class AppController:
         token_data = {
             "launched_by": "launcher",
             "user": self.app_state["usuario"],
-            "load_partida": partida
+            "load_partida": {
+                "partida_id": partida["id"]
+            }
         }
 
         with open(token_path, "w", encoding="utf-8") as f:
             json.dump(token_data, f, indent=4)
 
-        print("[LAUNCHER] Token creado:", token_data)
+        print("[LAUNCHER] Token creado con partida:", token_data)
 
         juego_exe = os.path.join(game_dir, "Juego.exe")
         if not os.path.exists(juego_exe):
+            self.juego_lanzado = False
             raise RuntimeError(f"No se encontró el juego en:\n{juego_exe}")
 
         subprocess.Popen([juego_exe], cwd=game_dir)
         self.launcher.close()
+
 
     def _lanzar_juego(self):
         base_dir = get_base_dir()
