@@ -2,6 +2,7 @@ from .VentanaInicio import launcher
 from .cargarPartidas import cargar
 from .configuracion import configuracion
 from .introduccionNombre import introducirNombre
+from services.partidaService import PartidasService
 
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QMessageBox
@@ -43,7 +44,7 @@ class AppController:
         self.juego_lanzado = False
 
         # -----------------------------
-        # Cargar usuario local (si existe)
+        # Usuario local
         # -----------------------------
         self._cargar_usuario_local()
 
@@ -71,7 +72,7 @@ class AppController:
         self.launcher.idioma_cambiado.connect(self.carg_partidas.apply_language)
         self.launcher.idioma_cambiado.connect(self.introducir_nombre.apply_language)
 
-        # 🔑 CLAVE: cargar partida seleccionada
+        # 🔑 CLAVE: ID de partida seleccionada
         self.carg_partidas.partida_seleccionada.connect(
             self._on_partida_seleccionada
         )
@@ -123,6 +124,7 @@ class AppController:
         self.launcher.show()
         self.launcher.raise_()
         self.launcher.activateWindow()
+        
 
     def mostrar_introducir_nombre(self):
         self.introducir_nombre.setWindowModality(Qt.ApplicationModal)
@@ -155,21 +157,31 @@ class AppController:
             QMessageBox.critical(self.launcher, "Error", str(e))
             self.juego_lanzado = False
 
-    def _on_partida_seleccionada(self, partida):
-        """
-        partida YA es el dict completo.
-        No se vuelve a pedir al backend.
-        """
+    def _on_partida_seleccionada(self, partida_id: str):
+        jugador = self.app_state["usuario"]
+        service = PartidasService()
+
         try:
-            self._lanzar_juego_con_partida(partida)
+            partidas = service.obtener_partidas(jugador)
         except Exception as e:
             QMessageBox.critical(self.launcher, "Error", str(e))
+            return
+
+        partida = next((p for p in partidas if p.get("id") == partida_id), None)
+
+        print("[DEBUG] Partida seleccionada:", partida)
+
+        if not partida:
+            QMessageBox.critical(self.launcher, "Error", "Partida no encontrada")
+            return
+
+        self._lanzar_juego_con_partida(partida)
 
     # =========================================================
     # LANZAR JUEGO
     # =========================================================
 
-    def _lanzar_juego_con_partida(self, partida):
+    def _lanzar_juego_con_partida(self, partida: dict):
         base_dir = get_base_dir()
         game_dir = os.path.join(base_dir, "game")
         runtime_dir = os.path.join(base_dir, "runtime")

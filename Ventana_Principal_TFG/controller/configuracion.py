@@ -13,6 +13,7 @@ class configuracion(QWidget):
         self.ui = Ui_configuracion()
         self.service = ConfiguracionService()
         self.ui.setupUi(self)
+        self.setFixedSize(self.size())
         self.ui.ventana.setChecked(True)
         self.ui.ventana.stateChanged.connect(self.sync_checkboxes)
         self.ui.completa.stateChanged.connect(self.sync_checkboxes)

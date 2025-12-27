@@ -16,6 +16,8 @@ class introducirNombre(QWidget):
         self.app_state = app_state
         self.ui = Ui_introduccionNombre()
         self.ui.setupUi(self)
+        self.setFixedSize(self.size())
+
 
         # Creamos DAO y Service (por ahora lo dejamos así)
         self.dao = JugadorDAO()

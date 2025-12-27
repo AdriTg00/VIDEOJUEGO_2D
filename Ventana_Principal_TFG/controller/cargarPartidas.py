@@ -19,6 +19,8 @@ class cargar(QWidget):
 
         self.ui = Ui_partidaGuardada()
         self.ui.setupUi(self)
+        self.setFixedSize(self.size())
+
 
         self.partida_service = PartidasService()
         self.app_state = app_state

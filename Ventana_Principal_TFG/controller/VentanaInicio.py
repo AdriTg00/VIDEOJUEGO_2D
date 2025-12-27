@@ -17,6 +17,8 @@ class launcher(QMainWindow):
         self.app_state = app_state
         self.ui = Ui_launcher()
         self.ui.setupUi(self)
+        self.setFixedSize(self.size())
+
         
     
         self.ui.nuevaPartida.clicked.connect(self.nueva_partida)
