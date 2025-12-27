@@ -16,7 +16,16 @@ import subprocess
 # =========================================================
 # UTILIDADES
 # =========================================================
-
+def log_to_file(msg: str):
+    try:
+        base_dir = get_base_dir()
+        log_path = os.path.join(base_dir, "launcher.log")
+        with open(log_path, "a", encoding="utf-8") as f:
+            f.write(msg + "\n")
+    except Exception:
+        pass
+    
+    
 def get_base_dir():
     if getattr(sys, "frozen", False):
         return os.path.dirname(sys.executable)
@@ -180,9 +189,11 @@ class AppController:
     # =========================================================
     # LANZAR JUEGO
     # =========================================================
+    
+
 
     def _lanzar_juego_con_partida(self, partida: dict):
-        print("🟢 SE LANZA PARTIDA GUARDADA:", partida["id"])
+        log_to_file(f"🟢 SE LANZA PARTIDA GUARDADA: {partida['id']}")
         if self.juego_lanzado:
             return
 
@@ -218,7 +229,7 @@ class AppController:
 
 
     def _lanzar_juego(self):
-        print("🔥 SE LANZA NUEVA PARTIDA")
+        log_to_file("🔥 SE LANZA NUEVA PARTIDA")
         base_dir = get_base_dir()
         game_dir = os.path.join(base_dir, "game")
         runtime_dir = os.path.join(base_dir, "runtime")
@@ -240,3 +251,5 @@ class AppController:
 
         subprocess.Popen([juego_exe], cwd=game_dir)
         self.launcher.close()
+
+
