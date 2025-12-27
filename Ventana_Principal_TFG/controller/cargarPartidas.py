@@ -1,12 +1,18 @@
 from PySide6.QtCore import Qt, Signal
-from PySide6.QtWidgets import QWidget, QMessageBox, QTableWidgetItem, QAbstractItemView
+from PySide6.QtWidgets import (
+    QWidget,
+    QMessageBox,
+    QTableWidgetItem,
+    QAbstractItemView
+)
 from views.partidasGuardadas_ui import Ui_partidaGuardada
 from translator import TRANSLATIONS
 from services.partidaService import PartidasService
 
 
 class cargar(QWidget):
-    partida_seleccionada = Signal(str)
+    # 🔑 Emitimos LA PARTIDA COMPLETA
+    partida_seleccionada = Signal(dict)
 
     def __init__(self, app_state, parent=None):
         super().__init__(parent)
@@ -17,7 +23,7 @@ class cargar(QWidget):
         self.partida_service = PartidasService()
         self.app_state = app_state
 
-        # 🔹 Selección por FILA
+        # Selección por fila
         self.ui.tablaGuardados.setSelectionBehavior(
             QAbstractItemView.SelectRows
         )
@@ -25,7 +31,7 @@ class cargar(QWidget):
             QAbstractItemView.SingleSelection
         )
 
-        # 🔹 Doble click = cargar partida
+        # Doble click = cargar partida
         self.ui.tablaGuardados.itemDoubleClicked.connect(
             self._on_partida_doble_click
         )
@@ -66,51 +72,41 @@ class cargar(QWidget):
 
         for fila, partida in enumerate(partidas):
 
-            # Col 0 → Jugador
-            item_jugador = QTableWidgetItem(partida["jugador_id"])
-            item_jugador.setData(Qt.UserRole, partida["id"])  # ID oculto
-            tabla.setItem(fila, 0, item_jugador)
+            # Col 0 → Nivel
+            item_nivel = QTableWidgetItem(str(partida.get("nivel", 1)))
 
-            # Col 1 → Nivel
+            # 🔑 Guardamos LA PARTIDA ENTERA aquí
+            item_nivel.setData(Qt.UserRole, partida)
+
+            tabla.setItem(fila, 0, item_nivel)
+
+            # Col 1 → Muertes
             tabla.setItem(
                 fila, 1,
-                QTableWidgetItem(str(partida["nivel"]))
+                QTableWidgetItem(str(partida.get("muertes_nivel", 0)))
             )
 
-            # Col 2 → Muertes
+            # Col 2 → Tiempo
             tabla.setItem(
                 fila, 2,
-                QTableWidgetItem(str(partida["muertes_nivel"]))
-            )
-
-            # Col 3 → Tiempo
-            tabla.setItem(
-                fila, 3,
                 QTableWidgetItem(
-                    self._formatear_tiempo(partida["tiempo"])
+                    self._formatear_tiempo(partida.get("tiempo", 0))
                 )
             )
 
-            # Col 4 → Puntuación
+            # Col 3 → Puntuación
+            tabla.setItem(
+                fila, 3,
+                QTableWidgetItem(str(partida.get("puntuacion", 0)))
+            )
+
+            # Col 4 → Fecha
             tabla.setItem(
                 fila, 4,
-                QTableWidgetItem(str(partida["puntuacion"]))
+                QTableWidgetItem(
+                    str(partida.get("fecha", ""))
+                )
             )
-
-            # Col 5 → Fecha
-            tabla.setItem(
-                fila, 5,
-                QTableWidgetItem(partida["fecha"])
-            )
-
-            # Col 6 → ID (visible solo si quieres)
-            tabla.setItem(
-                fila, 6,
-                QTableWidgetItem(partida["id"])
-            )
-
-        # Opcional: ocultar columna ID
-        tabla.setColumnHidden(6, True)
 
     # -------------------------------------------------
     # Utilidades
@@ -129,10 +125,10 @@ class cargar(QWidget):
     def _on_partida_doble_click(self, item):
         fila = item.row()
 
-        # El ID lo guardamos en la columna Jugador (UserRole)
-        partida_id = self.ui.tablaGuardados.item(
+        # Recuperamos LA PARTIDA COMPLETA
+        partida = self.ui.tablaGuardados.item(
             fila, 0
         ).data(Qt.UserRole)
 
-        self.partida_seleccionada.emit(partida_id)
+        self.partida_seleccionada.emit(partida)
         self.close()
