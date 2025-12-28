@@ -17,7 +17,7 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QComboBox, QLabel, QMainWindow,
     QPushButton, QSizePolicy, QStatusBar, QWidget)
-import resources_rc
+import resources.resources_rc
 
 class Ui_launcher(object):
     def setupUi(self, launcher):
