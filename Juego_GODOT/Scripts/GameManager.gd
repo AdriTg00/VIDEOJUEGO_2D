@@ -27,7 +27,7 @@ func fin_de_juego():
 	fin_ejecutado = true
 
 	var datos = {
-		"jugador_id": LaunchToken.user_name,
+		"jugador_id": LaunchToken.user,
 		"tiempo_total": Global.get_tiempo_total(),
 		"puntuacion_total": Global.get_puntuacion_total(),
 		"niveles_superados": Global.nivel
@@ -53,5 +53,9 @@ func _enviar_estadisticas_jugador(datos: Dictionary):
 	)
 	
 func _on_estadisticas_enviadas(result, response_code, headers, body):
+	var text = body.get_string_from_utf8()
 	print("API RESPUESTA | código:", response_code)
-	print("API RESPUESTA | body:", body.get_string_from_utf8())
+	print("API RESPUESTA | body:", text)
+
+	if response_code != 200:
+		push_error("Error actualizando estadísticas del jugador")
