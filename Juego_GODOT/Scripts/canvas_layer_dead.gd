@@ -21,4 +21,5 @@ func mostrar_pantalla_muerte():
 	tween.tween_property(boton_retry, "modulate:a", 1.0, 0.8)
 
 func _on_retry_pressed():
+	Global.reset_game()
 	get_tree().change_scene_to_file("res://Escenas/primer_nivel.tscn")

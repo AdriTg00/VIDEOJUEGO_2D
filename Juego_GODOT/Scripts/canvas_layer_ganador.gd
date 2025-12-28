@@ -40,4 +40,5 @@ func _actualizar_estadisticas():
 			]
 
 func _on_retry_pressed():
+	Global.reset_game()
 	get_tree().change_scene_to_file("res://Escenas/primer_nivel.tscn")
