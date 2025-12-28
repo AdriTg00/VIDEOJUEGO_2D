@@ -1,4 +1,4 @@
-from DAO.partidaDAO import PartidasDAO
+from dao.partida_dao import PartidasDAO
 from model.partida import Partida
 from datetime import datetime
 

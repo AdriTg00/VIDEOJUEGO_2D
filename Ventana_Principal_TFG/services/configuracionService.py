@@ -1,5 +1,5 @@
 from model.configuracion import Configuracion
-from DAO.configuracionDAO import ConfiguracionDAO
+from dao.configuracion_dao import ConfiguracionDAO
 
 class ConfiguracionService:
 

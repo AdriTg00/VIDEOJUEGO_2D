@@ -1,4 +1,4 @@
-from DAO.jugadorDAO import JugadorDAO
+from dao.jugador_dao import JugadorDAO
 import json
 import os
 
