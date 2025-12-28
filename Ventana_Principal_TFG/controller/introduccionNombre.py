@@ -5,7 +5,7 @@ from PySide6.QtWidgets import QWidget, QMessageBox
 from views.introduccionNombre_ui import Ui_introduccionNombre
 from translator import TRANSLATIONS
 from services.jugadorService import JugadorService
-from DAO.jugadorDAO import JugadorDAO
+
 
 class introducirNombre(QWidget):
     nombre_validado = Signal(str)
@@ -17,11 +17,10 @@ class introducirNombre(QWidget):
         self.ui = Ui_introduccionNombre()
         self.ui.setupUi(self)
         self.setFixedSize(self.size())
+        self.service = JugadorService()
 
 
         # Creamos DAO y Service (por ahora lo dejamos así)
-        self.dao = JugadorDAO()
-        self.service = JugadorService(self.dao)
 
         # Aplica idioma al inicio
         self.apply_language()
