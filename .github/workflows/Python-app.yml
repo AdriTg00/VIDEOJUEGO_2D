@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest   # Para generar el .exe
+    runs-on: windows-latest   # Genera el .exe en Windows
 
     steps:
     - name: Checkout repository
@@ -23,6 +23,7 @@ jobs:
       shell: pwsh
       run: |
         python -m pip install --upgrade pip
+
         if (Test-Path -Path "requirements.txt") {
           pip install -r requirements.txt
         } else {
@@ -36,11 +37,17 @@ jobs:
       working-directory: Ventana_Principal_TFG
       shell: pwsh
       run: |
-        # Build optimizado SOLO con Qt Widgets (sin cargar Qt completo)
         python -m PyInstaller main.py `
           --onefile `
           --noconsole `
           --name Launcher_Videojuego `
+          --collect-submodules dao `
+          --collect-submodules services `
+          --collect-submodules controller `
+          --collect-submodules model `
+          --collect-submodules views `
+          --collect-submodules widgets `
+          --collect-submodules workers `
           --hidden-import requests `
           --hidden-import PySide6.QtCore `
           --hidden-import PySide6.QtGui `
@@ -70,14 +77,14 @@ jobs:
           --exclude-module PySide6.QtLocation `
           --exclude-module PySide6.QtNetworkAuth
 
-        Write-Host "Contenido de Ventana_Principal_TFG (raíz):"
+        Write-Host "Contenido de Ventana_Principal_TFG:"
         dir
 
-        Write-Host "Contenido de Ventana_Principal_TFG/dist:"
+        Write-Host "Contenido de dist:"
         if (Test-Path -Path dist) {
           dir dist
         } else {
-          Write-Host "No existe carpeta dist (falló PyInstaller?)"
+          Write-Host "No existe carpeta dist (falló PyInstaller)"
         }
 
     - name: Upload artifact
