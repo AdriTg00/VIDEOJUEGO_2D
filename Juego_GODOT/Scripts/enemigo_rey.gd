@@ -106,6 +106,7 @@ func recibir_dano(cantidad: int = 1):
 	vida -= cantidad
 	print("El cerdo recibió daño. Vida restante:", vida)
 	if vida <= 0:
+		GameManager.fin_de_juego()
 		_morir()
 		return
 	invulnerable = true
@@ -129,9 +130,6 @@ func recibir_dano(cantidad: int = 1):
 
 func _morir():
 	muerto = true
-	if GameManager:
-		print("BOSS FINAL | Muerto → fin de juego")
-		GameManager.fin_de_juego()
 	en_persecucion = false
 	var hud = get_tree().root.get_node("Juego/CanvasLayer")
 	hud.añadir_moneda(3)

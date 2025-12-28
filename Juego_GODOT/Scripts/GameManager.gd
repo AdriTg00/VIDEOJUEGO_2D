@@ -22,6 +22,8 @@ func aplicar_partida(partida_data: Dictionary):
 	Global.score_nivel3 = 0
 
 func fin_de_juego():
+	print("DEBUG | fin_de_juego() llamado")
+
 	if fin_ejecutado:
 		return
 	fin_ejecutado = true
