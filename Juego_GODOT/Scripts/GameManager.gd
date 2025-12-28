@@ -46,26 +46,37 @@ func fin_de_juego():
 
 
 func _enviar_estadisticas_jugador(datos: Dictionary):
+	print("HTTP | Preparando envío de estadísticas")
+
 	var http := HTTPRequest.new()
-	add_child(http)
+	http.name = "HTTPRequest_Estadisticas"
+	get_tree().root.add_child(http) #NO al GameManager
 
 	http.request_completed.connect(_on_estadisticas_enviadas)
 
 	var headers = ["Content-Type: application/json"]
 	var body = JSON.stringify(datos)
 
-	http.request(
+	var err = http.request(
 		"https://flask-server-9ymz.onrender.com/jugadores/estadisticas",
 		headers,
 		HTTPClient.METHOD_POST,
 		body
 	)
 
+	if err != OK:
+		push_error("HTTP | Error al lanzar request: %s" % err)
+
+
 
 func _on_estadisticas_enviadas(result, response_code, headers, body):
 	var text = body.get_string_from_utf8()
 	print("API RESPUESTA | código:", response_code)
 	print("API RESPUESTA | body:", text)
+
+	var http = get_node_or_null("/root/HTTPRequest_Estadisticas")
+	if http:
+		http.queue_free()
 
 	if response_code != 200:
 		push_error("Error actualizando estadísticas del jugador")
