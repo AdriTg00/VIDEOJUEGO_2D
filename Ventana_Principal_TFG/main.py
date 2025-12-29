@@ -1,12 +1,14 @@
 import sys
 from PySide6.QtWidgets import QApplication
 from controller.app_controller import AppController
-from services.configuracion_service import ConfiguracionDAO
+from bootstrap.app_bootstrap import init_persistence
+
 
 def main():
-    configuracion = ConfiguracionDAO()
-    configuracion._connect()
-    configuracion._ensure_table()
+    # Inicialización técnica (BD, tablas, etc.)
+    init_persistence()
+
+    # Qt App
     app = QApplication(sys.argv)
     app.setApplicationName("Launcher")
     app.setStyleSheet("""
@@ -17,8 +19,10 @@ def main():
             color: black;
         }
     """)
+
     controller = AppController()
     sys.exit(app.exec())
+
 
 if __name__ == "__main__":
     main()
