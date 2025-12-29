@@ -2,6 +2,8 @@ from .VentanaInicio import launcher
 from .cargarPartidas import cargar
 from .configuracion import configuracion
 from .introduccionNombre import introducirNombre
+from services.configuracion_service import ConfiguracionService
+
 
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QMessageBox
@@ -66,6 +68,8 @@ class AppController:
         self.config_window = configuracion(self.app_state)
         self.carg_partidas = cargar(self.app_state)
         self.introducir_nombre = introducirNombre(self.app_state)
+        self.configuracion_service = ConfiguracionService()
+
 
         # -----------------------------
         # Señales
@@ -213,10 +217,19 @@ class AppController:
 
         token_path = os.path.join(runtime_dir, "launch_token.json")
 
+        # 🔑 CARGAR CONFIGURACIÓN
+        config = self.configuracion_service.cargar_configuracion()
+
         token_data = {
             "launched_by": "launcher",
             "user": self.app_state["usuario"],
-            "load_partida": partida
+            "load_partida": partida,
+            "configuracion": {
+                "volumen_musica": config.volumen_musica,
+                "volumen_sfx": config.volumen_sfx,
+                "resolucion": config.resolucion,
+                "modo_pantalla": config.modo_pantalla
+            }
         }
 
         with open(token_path, "w", encoding="utf-8") as f:
@@ -225,10 +238,6 @@ class AppController:
         log_to_file(f"📄 TOKEN ESCRITO (CARGA): {token_data}")
 
         juego_exe = os.path.join(game_dir, "Juego.exe")
-        if not os.path.exists(juego_exe):
-            self.juego_lanzado = False
-            raise RuntimeError(f"No se encontró el juego en:\n{juego_exe}")
-
         subprocess.Popen([juego_exe], cwd=game_dir)
         self.launcher.close()
 
@@ -243,9 +252,18 @@ class AppController:
 
         token_path = os.path.join(runtime_dir, "launch_token.json")
 
+        # 🔑 CARGAR CONFIGURACIÓN
+        config = self.configuracion_service.cargar_configuracion()
+
         token_data = {
             "launched_by": "launcher",
-            "user": self.app_state["usuario"]
+            "user": self.app_state["usuario"],
+            "configuracion": {
+                "volumen_musica": config.volumen_musica,
+                "volumen_sfx": config.volumen_sfx,
+                "resolucion": config.resolucion,
+                "modo_pantalla": config.modo_pantalla
+            }
         }
 
         with open(token_path, "w", encoding="utf-8") as f:
@@ -254,9 +272,6 @@ class AppController:
         log_to_file(f"📄 TOKEN ESCRITO (NUEVA): {token_data}")
 
         juego_exe = os.path.join(game_dir, "Juego.exe")
-        if not os.path.exists(juego_exe):
-            self.juego_lanzado = False
-            raise RuntimeError(f"No se encontró el juego en:\n{juego_exe}")
-
         subprocess.Popen([juego_exe], cwd=game_dir)
         self.launcher.close()
+
