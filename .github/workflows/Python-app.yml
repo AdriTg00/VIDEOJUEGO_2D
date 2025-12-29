@@ -2,9 +2,9 @@ name: Build Qt Application
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "rama-pruebas" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "rama-pruebas" ]
 
 jobs:
   build:
