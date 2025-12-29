@@ -22,7 +22,18 @@ class JugadorService:
     # 🔑 CLAVE
     # -----------------------------
     def obtener_estadisticas_jugador(self, jugador_id: str):
-        return self.dao.obtener_estadisticas(jugador_id)
+        """
+        Devuelve un dict con las estadísticas del jugador
+        o None si no existen
+        """
+        stats = self.dao.obtener_estadisticas(jugador_id)
+
+        # 🔍 DEBUG defensivo
+        if not stats:
+            return None
+
+        return stats
+
 
     # -----------------------------
     # Local storage

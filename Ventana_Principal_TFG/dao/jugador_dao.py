@@ -27,13 +27,17 @@ class JugadorDAO:
     # -----------------------------
     def obtener_estadisticas(self, jugador_id: str):
         resp = self.session.get(
-            f"{BASE_URL}/jugadores/obtener",
-            params={"jugador_id": jugador_id},
-            timeout=self.default_timeout
+            f"{BASE_URL}/jugadores/{jugador_id}",
+            timeout=self.timeout
         )
 
-        if resp.status_code == 404:
+        if resp.status_code != 200:
             return None
 
-        resp.raise_for_status()
-        return resp.json()
+        data = resp.json()
+
+        # 🔑 Si el backend devuelve {} → tratamos como None
+        if not data:
+            return None
+
+        return data
