@@ -172,22 +172,14 @@ class Ui_partidaGuardada(object):
 
         self.lblEstadisticas = QLabel(self.frame_2)
         self.lblEstadisticas.setObjectName(u"lblEstadisticas")
+        self.lblEstadisticas.setAutoFillBackground(False)
         self.lblEstadisticas.setStyleSheet(u"QLabel#lblEstadisticas {\n"
-"    background-color: #F4E6C3;        /* fondo tipo pergamino */\n"
-"    border: 2px solid #8B5A2B;        /* marr\u00f3n oscuro */\n"
+"    background-color: #F4E6C3;\n"
+"    border: 2px solid #8B5A2B;\n"
 "    border-radius: 8px;\n"
 "    padding: 10px 14px;\n"
-"\n"
-"    color: #3A2A1A;                   /* texto oscuro legible */\n"
+"    color: #3A2A1A;\n"
 "    font-size: 14px;\n"
-"    font-family: \"Segoe UI\", \"Arial\";\n"
-"\n"
-"    qproperty-alignment: AlignLeft | AlignTop;\n"
-"}\n"
-"\n"
-"/* T\u00edtulo (primera l\u00ednea con emoji) */\n"
-"QLabel#lblEstadisticas {\n"
-"    line-height: 1.4;\n"
 "}\n"
 "")
         self.lblEstadisticas.setWordWrap(True)

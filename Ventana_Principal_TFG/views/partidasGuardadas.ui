@@ -231,23 +231,17 @@ QScrollBar::sub-line:vertical {
       </item>
       <item row="1" column="0">
        <widget class="QLabel" name="lblEstadisticas">
+        <property name="autoFillBackground">
+         <bool>false</bool>
+        </property>
         <property name="styleSheet">
          <string notr="true">QLabel#lblEstadisticas {
-    background-color: #F4E6C3;        /* fondo tipo pergamino */
-    border: 2px solid #8B5A2B;        /* marrón oscuro */
+    background-color: #F4E6C3;
+    border: 2px solid #8B5A2B;
     border-radius: 8px;
     padding: 10px 14px;
-
-    color: #3A2A1A;                   /* texto oscuro legible */
+    color: #3A2A1A;
     font-size: 14px;
-    font-family: &quot;Segoe UI&quot;, &quot;Arial&quot;;
-
-    qproperty-alignment: AlignLeft | AlignTop;
-}
-
-/* Título (primera línea con emoji) */
-QLabel#lblEstadisticas {
-    line-height: 1.4;
 }
 </string>
         </property>
