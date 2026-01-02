@@ -21,6 +21,10 @@ Global="*res://Scripts/global.gd"
 LaunchToken="*res://Scripts/LaunchToken.gd"
 GameManager="*res://Scripts/GameManager.gd"
 
+[display]
+
+window/stretch/mode="canvas_items"
+
 [input]
 
 move_left={
