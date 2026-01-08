@@ -14,22 +14,19 @@ from PySide6.QtWidgets import QApplication
 
 class AppController:
     def __init__(self):
-        # -----------------------------
+        
         # Sesión
-        # -----------------------------
         self.session = SessionManager()
 
-        # -----------------------------
+    
         # Ventanas
-        # -----------------------------
         self.launcher = launcher(self.session.state)
         self.config = configuracion(self.session.state)
         self.cargar = cargar(self.session.state)
         self.intro = introducirNombre(self.session.state)
 
-        # -----------------------------
+        
         # Controladores
-        # -----------------------------
         self.nav = NavigationController(
             self.launcher,
             self.cargar,
@@ -38,14 +35,12 @@ class AppController:
         )
         self.game = GameLauncher(self.session)
 
-        # -----------------------------
+        
         # Señales
-        # -----------------------------
         self._conectar_senales()
 
-        # -----------------------------
+
         # Arranque
-        # -----------------------------
         self._decidir_inicio()
 
     def _conectar_senales(self):
@@ -68,9 +63,8 @@ class AppController:
         else:
             self.nav.mostrar_intro()
 
-    # -----------------------------
+
     # Callbacks
-    # -----------------------------
     def _on_nombre_validado(self, user_id):
         self.session.guardar_usuario(user_id)
         self.nav.mostrar_launcher()
