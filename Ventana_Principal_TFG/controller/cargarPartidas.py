@@ -15,15 +15,13 @@ from utils.logger import setup_logger
 
 
 class cargar(QWidget):
-    # 🔑 Emitimos LA PARTIDA COMPLETA
+    # Emitimos LA PARTIDA COMPLETA
     partida_seleccionada = Signal(dict)
 
     def __init__(self, app_state, parent=None):
         super().__init__(parent)
 
-        # -------------------------------------------------
         # Logger
-        # -------------------------------------------------
         self.log = setup_logger("cargar_partidas")
         self.log.info("=== Ventana Cargar Partidas creada ===")
 
@@ -60,15 +58,11 @@ class cargar(QWidget):
             self._on_partida_doble_click
         )
 
-        # -------------------------------------------------
         # Init
-        # -------------------------------------------------
         self.apply_language()
         self.cargar_partidas()
 
-    # -------------------------------------------------
     # Idioma
-    # -------------------------------------------------
     def apply_language(self):
         lang = self.app_state.get("language", "Español")
         tr = TRANSLATIONS[lang]
@@ -78,9 +72,7 @@ class cargar(QWidget):
             tr.get("saved_games", "Partidas guardadas")
         )
 
-    # -------------------------------------------------
     # Estadísticas globales
-    # -------------------------------------------------
     def _cargar_estadisticas_ultima(self):
         self.log.info("Entrando en _cargar_estadisticas_ultima()")
 
@@ -128,9 +120,7 @@ class cargar(QWidget):
         self.log.info("Pintando estadísticas en lblEstadisticas")
         self.ui.lblEstadisticas.setText(texto)
 
-    # -------------------------------------------------
     # Cargar partidas
-    # -------------------------------------------------
     def cargar_partidas(self):
         self.log.info("Iniciando cargar_partidas()")
 
@@ -176,9 +166,7 @@ class cargar(QWidget):
         self.log.info("Tabla cargada, cargando estadísticas globales")
         self._cargar_estadisticas_ultima()
 
-    # -------------------------------------------------
     # Utilidades
-    # -------------------------------------------------
     def _formatear_tiempo(self, segundos):
         if not segundos:
             return "00:00"
@@ -187,9 +175,8 @@ class cargar(QWidget):
         seg = int(segundos) % 60
         return f"{minutos:02}:{seg:02}"
 
-    # -------------------------------------------------
+
     # Doble click
-    # -------------------------------------------------
     def _on_partida_doble_click(self, item):
         fila = item.row()
         partida = self.ui.tablaGuardados.item(fila, 0).data(Qt.UserRole)
