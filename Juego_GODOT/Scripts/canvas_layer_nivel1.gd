@@ -31,7 +31,7 @@ func _ready():
 		if nodo is AnimatedSprite2D:
 			corazones.append(nodo)
 			nodo.play("idle")
-	corazones.sort_custom(func(a, b): return a.name < b.name)
+	corazones.reverse()
 
 	# 🔹 Detecta cámara activa automáticamente
 	_actualizar_camara()
