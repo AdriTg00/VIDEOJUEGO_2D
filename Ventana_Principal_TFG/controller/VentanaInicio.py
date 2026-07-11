@@ -31,7 +31,6 @@ class launcher(QMainWindow):
         self.ui.comboIdioma.setCurrentText(current_lang)
         self.ui.comboIdioma.currentTextChanged.connect(self.cambiar_idioma)
         self.ui.opciones.clicked.connect(self.emitir_abrir_config)
-        self.ui.nuevaPartida.clicked.connect(self.nueva_partida)
 
     # === FUNCIONES ===
     def nueva_partida(self):

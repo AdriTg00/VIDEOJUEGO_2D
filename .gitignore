@@ -1,12 +1,34 @@
-
+# --- Persistentes locales ---
 usuario_local.json
 configuracion.db
 runtime/launch_token.json
+
+# --- Logs ---
 *.log
+
+# --- Python ---
 __pycache__/
 *.pyc
 *.pyo
+*.pyz
 venv/
 .env
+*.egg-info/
+dist/
+build/
+*.spec
+
+# --- Godot ---
 Juego_GODOT/.godot/
 Juego_GODOT/.import/
+Juego_GODOT/export/
+Juego_GODOT/build/
+
+# --- IDE ---
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db

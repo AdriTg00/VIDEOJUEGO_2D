@@ -8,6 +8,7 @@ class Partida:
         muertes_nivel=0,
         puntuacion=0,
         tiempo=0,
+        fecha=None,
         pos_x=0.0,
         pos_y=0.0,
         tipo="guardado"
@@ -17,6 +18,7 @@ class Partida:
         self.muertes_nivel = muertes_nivel
         self.puntuacion = puntuacion
         self.tiempo = tiempo
+        self.fecha = fecha
         self.pos_x = pos_x
         self.pos_y = pos_y
         self.tipo = tipo

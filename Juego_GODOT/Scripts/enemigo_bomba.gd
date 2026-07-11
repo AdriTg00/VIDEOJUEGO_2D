@@ -8,11 +8,12 @@ extends CharacterBody2D
 @export var max_caida: float = 1000.0
 
 var jugador_detectado = false
-var lanzando = false  
+var lanzando := false
 var recibiendo_daño := false
+var invulnerable := false
 var vida = 5
 var muerto := false
-var jugador: CharacterBody2D 
+var jugador: CharacterBody2D
 
 func _ready():
 	detector.body_entered.connect(_on_body_entered)
@@ -61,19 +62,21 @@ func _on_timer_timeout():
 		_iniciar_lanzamiento()
 		
 func recibir_dano(cantidad: int = 1):
+	if muerto or invulnerable:
+		return
 	recibiendo_daño = true
+	invulnerable = true
 	vida -= cantidad
 	print("El cerdo recibió daño. Vida restante:", vida)
-	
+
 	if vida <= 0:
 		_morir()
 		return
 
-	# --- Animación y retroceso ---
-	anim.play("hit")       
-	# --- Aplica la física normal una sola vez ---
+	anim.play("hit")
 	await anim.animation_finished
 	recibiendo_daño = false
+	invulnerable = false
 	
 func _morir():
 	muerto = true

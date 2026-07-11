@@ -1,16 +1,6 @@
 import logging
 import os
-import sys
-
-
-def get_base_dir():
-    """
-    Devuelve la ruta base correcta tanto en desarrollo
-    como en ejecutable PyInstaller
-    """
-    if getattr(sys, 'frozen', False):
-        return os.path.dirname(sys.executable)
-    return os.path.dirname(os.path.abspath(__file__))
+from utils.paths import get_base_dir
 
 
 def setup_logger(name="app", filename="launcher.log"):

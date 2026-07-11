@@ -1,6 +1,5 @@
 import requests
-
-BASE_URL = "https://flask-server-9ymz.onrender.com"
+from config import API_BASE_URL
 
 
 class JugadorDAO:
@@ -14,7 +13,7 @@ class JugadorDAO:
     # -----------------------------
     def crear_usuario(self, nombre: str):
         resp = self.session.post(
-            f"{BASE_URL}/jugadores/crear",
+            f"{API_BASE_URL}/jugadores/crear",
             json={"nombre": nombre},
             timeout=self.default_timeout
         )
@@ -27,7 +26,7 @@ class JugadorDAO:
     # -----------------------------
     def obtener_estadisticas(self, jugador_id: str):
         resp = self.session.get(
-            f"{BASE_URL}/jugadores/{jugador_id}",
+            f"{API_BASE_URL}/jugadores/{jugador_id}",
             timeout=self.default_timeout
         )
 
