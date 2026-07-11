@@ -80,8 +80,8 @@ func recibir_dano(cantidad: int = 1):
 	
 func _morir():
 	muerto = true
-	var hud = get_tree().root.get_node("Juego/CanvasLayer")
-	hud.añadir_moneda(3)
+	var hud = get_tree().get_first_node_in_group("hud")
+	if hud: hud.añadir_moneda(3)
 	print("El cerdo ha muerto")
 	# Detiene cualquier movimiento o ataque
 	velocity = Vector2.ZERO

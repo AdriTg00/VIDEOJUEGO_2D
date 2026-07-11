@@ -16,6 +16,7 @@ var _tiempo_key := "tiempo_total_nivel1"
 var _score_key := "score_nivel1"
 
 func _ready():
+	add_to_group("hud")
 	match nivel_actual:
 		1:
 			_tiempo_key = "tiempo_total_nivel1"
@@ -61,7 +62,7 @@ func get_elapsed_text() -> String:
 	var seconds = int(t) % 60
 	return "%02d:%02d" % [minutes, seconds]
 
-func anadir_moneda(amount: int):
+func añadir_moneda(amount: int):
 	var current = Global.get(_score_key)
 	Global.set(_score_key, current + amount)
 	score_label.text = "Score: " + str(Global.get(_score_key))

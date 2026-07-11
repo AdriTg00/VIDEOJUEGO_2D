@@ -3,7 +3,6 @@ extends CharacterBody2D
 # --- Nodos ---
 @onready var anim = $AnimatedSprite2D
 @onready var detector_area = $Area2D
-@onready var detector_salto = $detector_salto
 @onready var gruñido = $"gruñido_cerdo"
 @onready var area_ataque = $attackArea
 @onready var dialogo = $dialogo
@@ -131,8 +130,8 @@ func recibir_dano(cantidad: int = 1):
 func _morir():
 	muerto = true
 	en_persecucion = false
-	var hud = get_tree().root.get_node("Juego/CanvasLayer")
-	hud.añadir_moneda(3)
+	var hud = get_tree().get_first_node_in_group("hud")
+	if hud: hud.añadir_moneda(3)
 	print("El cerdo ha muerto")
 	# Detiene cualquier movimiento o ataque
 	velocity = Vector2.ZERO
@@ -146,8 +145,8 @@ func _morir():
 	await anim.animation_finished
 	# Elimina el cerdo de la escena
 	queue_free()
-	var pantalla_ganadora = get_tree().root.get_node("Juego/canvas_layer_ganador") 
-	pantalla_ganadora.mostrar_pantalla_ganador()
+	var win = get_tree().get_first_node_in_group("win_screen")
+	if win: win.mostrar_pantalla_ganador()
 	
 
 

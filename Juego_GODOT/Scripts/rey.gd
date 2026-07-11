@@ -1,9 +1,7 @@
 extends CharacterBody2D
 
-#Exportaciones de nodos
 @onready var anim = $AnimatedSprite2D
 @onready var area_ataque = $Area2D
-@onready var vida_ui = get_tree().root.get_node("Juego/CanvasLayer") 
 @onready var hit = $sonidoHit
 @onready var hachazo = $golpe
 @onready var saltar = $saltar
@@ -11,10 +9,8 @@ extends CharacterBody2D
 @onready var musica = $musicaFondo
 @onready var recoger_moneda = $recolectar_moneda
 
-# --- CONSTANTES ---
 @export var gravedad: float = 1200.0
 @export var max_caida: float = 1000.0
-
 
 const VELOCIDAD = 150.0
 const IMPULSO_SALTO = -400.0
@@ -30,70 +26,49 @@ var vida = 5
 var invulnerable = false
 var monedas = 0
 var bloqueado = false
-
-
-var recibiendo_daño := false;
-
-# ---  PARA SABER SI ESTA MUERTO
+var recibiendo_daño := false
 var muerto = false
-# --- BLOQUEO DE ANIMACIÓN DE PUERTA ---
 var en_secuencia_puerta = false
-# --- ESTADOS ---
 var puede_atacar = true
 var atacando = false
-# --- ATERIZAJE ---
 var estaba_en_el_aire = false
 var aterrizo_recientemente = false
-
-# --- INPUTS ---
 var direccion_movimiento = 0
 
-
 func _physics_process(delta):
-	if bloqueado:
-		return
-	if muerto:
+	if bloqueado or muerto:
 		return
 	if en_secuencia_puerta:
 		move_and_slide()
-		return  # Sale inmediatamente, sin procesar nada más
+		return
 	_aplicar_gravedad(delta)
-	# --- Detección de aterrizaje ---
 	_detectar_aterrizaje()
-	
-	# --- Movimiento lateral (solo si no está atacando) ---
+
 	if not atacando:
 		direccion_movimiento = Input.get_axis("move_left", "move_right")
 		_aplicar_movimiento_horizontal()
-	# --- Salto (solo si no está atacando) ---
-# Al pulsar salto
+
 	if Input.is_action_just_pressed("jump") and is_on_floor() and not atacando and not aterrizo_recientemente:
 		saltar.play()
 		velocity.y = IMPULSO_SALTO
 		anim.play("jump")
 
-# Si sueltas el botón antes de llegar al pico del salto
 	if Input.is_action_just_released("jump") and velocity.y < 0 and not aterrizo_recientemente:
-		velocity.y *= 0.5  # reduce la altura si suelta antes
+		velocity.y *= 0.5
 
-	
-	# --- Ataque ---
 	if Input.is_action_just_pressed("attack") and puede_atacar and not muerto:
 		_atacar()
-	# --- Animaciones automáticas ---
+
 	_actualizar_animacion()
 	move_and_slide()
-	# --- Actualizar posición del área de ataque según la dirección ---
 	area_ataque.position.x = -21 if anim.flip_h else 21
 
-# --- FUNCIONES DE AYUDA ---
 func _aplicar_gravedad(delta):
 	if not is_on_floor():
 		velocity.y += gravedad * delta
 		velocity.y = min(velocity.y, max_caida)
 	else:
 		velocity.y = 0
-
 
 func _detectar_aterrizaje():
 	if not is_on_floor():
@@ -113,7 +88,6 @@ func _aplicar_movimiento_horizontal():
 func _actualizar_animacion():
 	if atacando or aterrizo_recientemente:
 		return
-
 	if not is_on_floor():
 		anim.play("jump" if velocity.y < 0 else "fall")
 	elif direccion_movimiento != 0:
@@ -122,60 +96,42 @@ func _actualizar_animacion():
 		anim.play("idle")
 
 func agregar_moneda(cantidad: int):
-	var hud = get_tree().root.get_node("Juego/CanvasLayer")
-	hud.añadir_moneda(1)
+	var hud = get_tree().get_first_node_in_group("hud")
+	if hud: hud.añadir_moneda(1)
 	recoger_moneda.play()
 	monedas += cantidad
-	print("Monedas:", monedas)
-
 
 func recibir_dano(cantidad: int = 1):
-	
 	if muerto or invulnerable:
 		return
-		# --- Bloqueo temporal ---
 	recibiendo_daño = true
 	invulnerable = true
 	atacando = true
-	
 	anim.play("hit")
 
-	# --- Resta vida ---
 	vida -= cantidad
-	print("El rey recibió daño. Vida restante:", vida)
 
-	# --- Actualiza HUD (no bloqueante) ---
-	var vida_ui = get_tree().root.get_node("Juego/CanvasLayer") 
-	if vida_ui and vida_ui.has_method("actualizar_vida"):
-		vida_ui.call_deferred("actualizar_vida", vida)
+	var hud = get_tree().get_first_node_in_group("hud")
+	if hud and hud.has_method("actualizar_vida"):
+		hud.call_deferred("actualizar_vida", vida)
 
-	# --- Si muere ---
 	if vida <= 0:
 		_morir()
 		return
 
-
-	
 	hit.play()
-# --- Retroceso estilo pixel platformer ---
 	var dir = 1 if anim.flip_h else -1
-	velocity = Vector2(dir * IMPULSO_RETROCESO_DAÑO, -100) # un pequeño salto atrás
+	velocity = Vector2(dir * IMPULSO_RETROCESO_DAÑO, -100)
 
-# Mantiene el impulso por unos frames mientras la gravedad actúa
-	for i in range(10):  # ~0.16s
+	for i in range(10):
 		move_and_slide()
 		await get_tree().process_frame
 
 	velocity = Vector2.ZERO
-
-	# --- Esperamos fin de animación de golpe ---
 	await anim.animation_finished
-	
 	atacando = false
 	invulnerable = false
 	recibiendo_daño = false
-
-	# --- Cooldown de invulnerabilidad ---
 	await get_tree().create_timer(1.0).timeout
 
 func _morir():
@@ -184,16 +140,13 @@ func _morir():
 	muerto = true
 	anim.play("dead")
 	velocity.x = 0
-	print("El rey ha muerto")
 	Global.score_nivel1 = 0
 	Global.score_nivel2 = 0
 	Global.score_nivel3 = 0
-	var pantalla_muerte = get_tree().root.get_node("Juego/canvas_layer_dead")  # cambia por tu ruta real
-	pantalla_muerte.mostrar_pantalla_muerte()
-	var hud = get_tree().root.get_node("Juego/CanvasLayer")
-	hud.actualizar_muertes()
-
-# --- ATAQUE ---
+	var death = get_tree().get_first_node_in_group("death_screen")
+	if death: death.mostrar_pantalla_muerte()
+	var hud = get_tree().get_first_node_in_group("hud")
+	if hud: hud.actualizar_muertes()
 
 func _atacar():
 	if recibiendo_daño:
@@ -203,12 +156,9 @@ func _atacar():
 	anim.play("attack")
 	hachazo.play()
 	velocity = Vector2.ZERO
-	# Activar área de ataque temporalmente
 	area_ataque.set_deferred("monitoring", true)
 	area_ataque.set_deferred("monitorable", true)
-	# Esperar un poco para que las colisiones se registren
 	await get_tree().create_timer(0.1).timeout
-	# Obtener cuerpos que están dentro del área
 	var cuerpos = area_ataque.get_overlapping_bodies()
 
 	if cuerpos.size() > 0:
@@ -216,53 +166,37 @@ func _atacar():
 		for cuerpo in cuerpos:
 			if cuerpo != self and cuerpo.has_method("recibir_dano"):
 				cuerpo.recibir_dano(1)
-				print("Golpeó a enemigo:", cuerpo.name)
 				_aplicar_retroceso()
 				golpeo_enemigo = true
 				break
-
-		# Si no golpeó a ningún enemigo, aplicar retroceso si hay colisión
 		if not golpeo_enemigo:
-			print("Golpeó contra pared u obstáculo")
 			_aplicar_retroceso()
 
-	# Desactivar área de ataque
 	area_ataque.monitoring = false
 	area_ataque.monitorable = false
-
 	await anim.animation_finished
 	atacando = false
-
 	await get_tree().create_timer(COOLDOWN_ATAQUE).timeout
 	puede_atacar = true
 
-# --- ANIMACIÓN DE ATERIZAJE ---
 func _reproducir_aterrizaje():
-		aterrizo_recientemente = true
-		anim.play("ground")
-		await anim.animation_finished
-		aterrizo_recientemente = false
+	aterrizo_recientemente = true
+	anim.play("ground")
+	await anim.animation_finished
+	aterrizo_recientemente = false
 
-# --- RETROCESO ---
 func _aplicar_retroceso():
 	var direccion = -1 if anim.flip_h else 1
 	velocity.x = direccion * -IMPULSO_RETROCESO
-	
-
 
 func _ready():
-	print("REY | Ready en escena:", get_tree().current_scene.name)
 	add_to_group("player")
-
 	if GameManager.partida.size() > 0 and not GameManager.carga_aplicada:
-		print("REY | Spawn desde partida cargada")
 		global_position = Vector2(
 			GameManager.partida.get("pos_x", global_position.x),
 			GameManager.partida.get("pos_y", global_position.y)
 		)
 		GameManager.carga_aplicada = true
-	else:
-		print("REY | Spawn normal del nivel")
 
 	musica.play()
 	en_secuencia_puerta = true
