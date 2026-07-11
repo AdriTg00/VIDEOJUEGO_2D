@@ -1,5 +1,7 @@
+## game_bootstrap — Boot sequence: load save, determine level, navigate
 extends Node
 
+## Lifecycle
 func _ready():
 	print("BOOTSTRAP | Ready")
 
@@ -30,7 +32,7 @@ func _ready():
 
 	get_tree().change_scene_to_file(path)
 
-
+## Load save file from disk
 func _cargar_local_save() -> Dictionary:
 	if not FileAccess.file_exists("user://partida_local.json"):
 		return {}

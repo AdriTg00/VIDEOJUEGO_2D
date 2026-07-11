@@ -1,3 +1,4 @@
+## pausa — Pause menu with resume, save, load, and quit
 extends CanvasLayer
 
 @onready var color_rect := $ColorRect
@@ -11,7 +12,7 @@ var player: Node2D
 
 var _btn_cargar: Button
 
-
+## Lifecycle
 func _ready():
 	get_tree().paused = false
 	color_rect.visible = false
@@ -34,18 +35,16 @@ func _ready():
 
 	call_deferred("_buscar_player")
 
-
 func _buscar_player():
 	player = get_tree().get_first_node_in_group("player")
 	if player == null:
 		push_error("PAUSA: No se encontró el player (grupo 'player')")
 
-
 func _unhandled_input(event):
 	if event.is_action_pressed("pausa"):
 		_toggle_pause()
 
-
+## Toggle pause state
 func _toggle_pause():
 	var paused := not get_tree().paused
 	get_tree().paused = paused
@@ -53,7 +52,6 @@ func _toggle_pause():
 	vbox.visible = paused
 	if paused:
 		btn_reanudar.grab_focus()
-
 
 func _on_guardar_pressed():
 	if player == null:
@@ -64,7 +62,7 @@ func _on_guardar_pressed():
 	else:
 		guardar_local()
 
-
+## Save game to remote server
 func _guardar_remoto():
 	var url := "https://flask-server-9ymz.onrender.com/partidas/guardar"
 	var data := _build_save_data("guardado")
@@ -72,14 +70,13 @@ func _guardar_remoto():
 	if err != OK:
 		push_error("Error enviando guardado remoto")
 
-
+## Save game to local disk
 func guardar_local():
 	var data := _build_save_data("local")
 	var file := FileAccess.open("user://partida_local.json", FileAccess.WRITE)
 	file.store_string(JSON.stringify(data, "\t"))
 	file.close()
 	print("Partida guardada LOCALMENTE")
-
 
 func _build_save_data(tipo: String) -> Dictionary:
 	return {
@@ -92,7 +89,6 @@ func _build_save_data(tipo: String) -> Dictionary:
 		"pos_y": player.global_position.y if player else 0,
 		"tipo": tipo
 	}
-
 
 func _on_cargar_pressed():
 	var data := _cargar_local_save()
@@ -112,7 +108,7 @@ func _on_cargar_pressed():
 
 	get_tree().change_scene_to_file(path)
 
-
+## Load save file from disk
 func _cargar_local_save() -> Dictionary:
 	if not FileAccess.file_exists("user://partida_local.json"):
 		return {}
@@ -123,7 +119,7 @@ func _cargar_local_save() -> Dictionary:
 	file.close()
 	return json.data if typeof(json.data) == TYPE_DICTIONARY else {}
 
-
+## Load save file from disk (static version)
 static func cargar_local_save() -> Dictionary:
 	if not FileAccess.file_exists("user://partida_local.json"):
 		return {}
@@ -133,16 +129,13 @@ static func cargar_local_save() -> Dictionary:
 	file.close()
 	return json.data if typeof(json.data) == TYPE_DICTIONARY else {}
 
-
 func _on_request_completed(result, response_code, headers, body):
 	print("Respuesta servidor:", response_code, body.get_string_from_utf8())
-
 
 func _on_reanudar_pressed():
 	get_tree().paused = false
 	color_rect.visible = false
 	vbox.visible = false
-
 
 func _on_salir_pressed():
 	get_tree().quit()

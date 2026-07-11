@@ -1,3 +1,5 @@
+## rey.gd — Player character controller
+
 extends CharacterBody2D
 
 @onready var anim = $AnimatedSprite2D
@@ -35,6 +37,8 @@ var estaba_en_el_aire = false
 var aterrizo_recientemente = false
 var direccion_movimiento = 0
 
+
+## Physics
 func _physics_process(delta):
 	if bloqueado or muerto:
 		return
@@ -83,7 +87,7 @@ func _aplicar_movimiento_horizontal():
 		velocity.x = direccion_movimiento * VELOCIDAD
 		anim.flip_h = direccion_movimiento < 0
 	else:
-		velocity.x = move_toward(velocity.x, 0, VELOCIDAD * 3 * get_physics_process_delta_time())
+		velocity.x = move_toward(velocity.x, 0, VELOCIDAD * 20 * get_physics_process_delta_time())
 
 func _actualizar_animacion():
 	if atacando or aterrizo_recientemente:
@@ -101,6 +105,8 @@ func agregar_moneda(cantidad: int):
 	recoger_moneda.play()
 	monedas += cantidad
 
+
+## Handle damage with invulnerability frames and knockback
 func recibir_dano(cantidad: int = 1):
 	if muerto or invulnerable:
 		return
@@ -134,6 +140,8 @@ func recibir_dano(cantidad: int = 1):
 	recibiendo_daño = false
 	await get_tree().create_timer(1.0).timeout
 
+
+## Death sequence
 func _morir():
 	musica.stop()
 	morir.play()
@@ -148,6 +156,8 @@ func _morir():
 	var hud = get_tree().get_first_node_in_group("hud")
 	if hud: hud.actualizar_muertes()
 
+
+## Attack with hit detection and cooldown
 func _atacar():
 	if recibiendo_daño:
 		return
@@ -189,6 +199,8 @@ func _aplicar_retroceso():
 	var direccion = -1 if anim.flip_h else 1
 	velocity.x = direccion * -IMPULSO_RETROCESO
 
+
+## Lifecycle
 func _ready():
 	add_to_group("player")
 	if GameManager.partida.size() > 0 and not GameManager.carga_aplicada:

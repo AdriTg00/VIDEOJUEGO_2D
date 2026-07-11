@@ -1,3 +1,4 @@
+## canvas_layer_hud — HUD overlay with score, timer, death counter, and camera-follow
 extends CanvasLayer
 
 @onready var score_label = $ScoreLabel
@@ -15,6 +16,7 @@ var running := false
 var _tiempo_key := "tiempo_total_nivel1"
 var _score_key := "score_nivel1"
 
+## Lifecycle
 func _ready():
 	add_to_group("hud")
 	match nivel_actual:
@@ -67,6 +69,7 @@ func añadir_moneda(amount: int):
 	Global.set(_score_key, current + amount)
 	score_label.text = "Score: " + str(Global.get(_score_key))
 
+## Physics
 func _process(delta: float):
 	if running:
 		var current = Global.get(_tiempo_key)
@@ -83,6 +86,7 @@ func _process(delta: float):
 	else:
 		transform.origin = destino
 
+## Health — animate and remove hearts
 func actualizar_vida(nueva_vida: int):
 	var corazones := []
 	for nodo in get_children():
@@ -92,9 +96,9 @@ func actualizar_vida(nueva_vida: int):
 	var vida_actual := corazones.size()
 
 	if nueva_vida < vida_actual:
-		for i in range(vida_actual - 1, nueva_vida - 1, -1):
-			if i >= 0 and i < corazones.size():
-				await _romper_corazon(corazones[i])
+		var perder = vida_actual - nueva_vida
+		for i in range(perder):
+			await _romper_corazon(corazones[i])
 
 func actualizar_muertes():
 	Global.death_count += 1

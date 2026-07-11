@@ -1,3 +1,4 @@
+## canvas_layer_ganador — Win screen overlay with stats display
 extends CanvasLayer
 
 @onready var color_rect = $ColorRect
@@ -5,6 +6,7 @@ extends CanvasLayer
 @onready var boton_retry = $VBoxContainer/Button
 @onready var label_stats = $VBoxContainer/stats
 
+## Lifecycle
 func _ready():
 	add_to_group("win_screen")
 	self.visible = false
@@ -23,6 +25,7 @@ func mostrar_pantalla_ganador():
 	tween.tween_property(label, "modulate:a", 1.0, 0.8)
 	tween.tween_property(boton_retry, "modulate:a", 1.0, 0.8)
 	tween.tween_property(label_stats, "modulate:a", 1.0, 1.2)
+
 func _actualizar_estadisticas():
 	label_stats.text = """
 			TIEMPO TOTAL: %.2f s

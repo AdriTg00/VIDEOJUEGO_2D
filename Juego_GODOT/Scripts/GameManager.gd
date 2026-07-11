@@ -1,3 +1,4 @@
+## GameManager — Save/load orchestration and end-game stats submission
 extends Node
 
 var partida := {}
@@ -5,7 +6,7 @@ var fin_ejecutado := false
 var carga_aplicada := false
 var partida_cargada := false
 
-
+## Apply saved data to global state
 func aplicar_partida(partida_data: Dictionary):
 	partida = partida_data
 	carga_aplicada = false
@@ -22,7 +23,7 @@ func aplicar_partida(partida_data: Dictionary):
 	Global.score_nivel2 = 0
 	Global.score_nivel3 = 0
 
-
+## Submit final stats to server
 func fin_de_juego():
 	print("DEBUG | fin_de_juego() llamado")
 
@@ -30,7 +31,6 @@ func fin_de_juego():
 		return
 	fin_ejecutado = true
 
-	# 🔑 VALIDACIÓN CLAVE
 	if Global.jugador_id == "":
 		push_error("FIN DE JUEGO | jugador_id vacío, abortando envío")
 		return
@@ -45,13 +45,13 @@ func fin_de_juego():
 	print("FIN DE JUEGO | Enviando estadisticas:", datos)
 	_enviar_estadisticas_jugador(datos)
 
-
+## Send stats via HTTP
 func _enviar_estadisticas_jugador(datos: Dictionary):
 	print("HTTP | Preparando envío de estadísticas")
 
 	var http := HTTPRequest.new()
 	http.name = "HTTPRequest_Estadisticas"
-	get_tree().root.add_child(http) #NO al GameManager
+	get_tree().root.add_child(http)
 
 	http.request_completed.connect(_on_estadisticas_enviadas)
 
@@ -67,8 +67,6 @@ func _enviar_estadisticas_jugador(datos: Dictionary):
 
 	if err != OK:
 		push_error("HTTP | Error al lanzar request: %s" % err)
-
-
 
 func _on_estadisticas_enviadas(result, response_code, headers, body):
 	var text = body.get_string_from_utf8()

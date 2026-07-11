@@ -1,3 +1,4 @@
+## canvas_layer_dead — Death screen overlay with retry and load options
 extends CanvasLayer
 
 @onready var color_rect = $ColorRect
@@ -6,6 +7,7 @@ extends CanvasLayer
 
 var _btn_cargar: Button
 
+## Lifecycle
 func _ready():
 	add_to_group("death_screen")
 	self.visible = false
@@ -49,6 +51,7 @@ func _on_cargar_pressed():
 
 	get_tree().change_scene_to_file(path)
 
+## Load save file from disk
 func _cargar_local_save() -> Dictionary:
 	if not FileAccess.file_exists("user://partida_local.json"):
 		return {}
