@@ -1,12 +1,12 @@
-## trigger_puerta.gd — One-shot door trigger for boss room
+## door_trigger — One-shot door trigger for boss room
 
 extends Area2D
-@onready var puerta = get_node("../puerta_boss")
-var activado := false
+@onready var door = get_node("../puerta_boss")
+var triggered := false
 
 func _on_body_entered(body):
-	if activado:
+	if triggered:
 		return
 	if body.name == "Rey":
-		activado = true
-		puerta.bajar()
+		triggered = true
+		door.lower()

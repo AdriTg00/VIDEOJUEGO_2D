@@ -1,4 +1,4 @@
-## rey.gd — Player character controller
+## rey — Player character controller
 
 extends CharacterBody2D
 
@@ -6,128 +6,133 @@ extends CharacterBody2D
 @onready var area_ataque = $Area2D
 @onready var hit = $sonidoHit
 @onready var hachazo = $golpe
-@onready var saltar = $saltar
-@onready var morir = $morir
-@onready var musica = $musicaFondo
-@onready var recoger_moneda = $recolectar_moneda
+@onready var jump_sfx = $saltar
+@onready var die_sfx = $morir
+@onready var music = $musicaFondo
+@onready var coin_sfx = $recolectar_moneda
 
-@export var gravedad: float = 1200.0
-@export var max_caida: float = 1000.0
+@export var gravity: float = 1200.0
+@export var max_fall: float = 1000.0
 
-const VELOCIDAD = 150.0
-const IMPULSO_SALTO = -400.0
-const GRAVEDAD_SUBIDA = 1200.0
-const GRAVEDAD_BAJADA = 2000.0
-const MULTIPLICADOR_SALTO_CORTO = 0.6
-const MAX_VELOCIDAD_CAIDA = 1200.0
-const IMPULSO_RETROCESO = 100.0
-const IMPULSO_RETROCESO_DAÑO = 100.0
-const COOLDOWN_ATAQUE = 0.2
+const SPEED = 150.0
+const JUMP_IMPULSE = -400.0
+const GRAVITY_UP = 1200.0
+const GRAVITY_DOWN = 2000.0
+const SHORT_JUMP_MULTIPLIER = 0.6
+const MAX_FALL_SPEED = 1200.0
+const KNOCKBACK_IMPULSE = 100.0
+const DAMAGE_KNOCKBACK_IMPULSE = 100.0
+const ATTACK_COOLDOWN = 0.2
 
-var vida = 5
+var hp = 5
 var invulnerable = false
-var monedas = 0
-var bloqueado = false
-var recibiendo_daño := false
-var muerto = false
-var en_secuencia_puerta = false
-var puede_atacar = true
-var atacando = false
-var estaba_en_el_aire = false
-var aterrizo_recientemente = false
-var direccion_movimiento = 0
+var coins = 0
+var locked = false
+var taking_damage := false
+var dead = false
+var in_door_sequence = false
+var can_attack = true
+var attacking = false
+var was_in_air = false
+var landed_recently = false
+var move_direction = 0
 
 
 ## Physics
 func _physics_process(delta):
-	if bloqueado or muerto:
+	if locked or dead:
 		return
-	if en_secuencia_puerta:
+	if in_door_sequence:
 		move_and_slide()
 		return
-	_aplicar_gravedad(delta)
-	_detectar_aterrizaje()
+	_apply_gravity(delta)
+	_detect_landing()
 
-	if not atacando:
-		direccion_movimiento = Input.get_axis("move_left", "move_right")
-		_aplicar_movimiento_horizontal()
+	if not attacking:
+		move_direction = Input.get_axis("move_left", "move_right")
+		_apply_horizontal_movement()
 
-	if Input.is_action_just_pressed("jump") and is_on_floor() and not atacando and not aterrizo_recientemente:
-		saltar.play()
-		velocity.y = IMPULSO_SALTO
+	if Input.is_action_just_pressed("jump") and is_on_floor() and not attacking and not landed_recently:
+		jump_sfx.play()
+		velocity.y = JUMP_IMPULSE
 		anim.play("jump")
 
-	if Input.is_action_just_released("jump") and velocity.y < 0 and not aterrizo_recientemente:
+	if Input.is_action_just_released("jump") and velocity.y < 0 and not landed_recently:
 		velocity.y *= 0.5
 
-	if Input.is_action_just_pressed("attack") and puede_atacar and not muerto:
-		_atacar()
+	if Input.is_action_just_pressed("attack") and can_attack and not dead:
+		_attack()
 
-	_actualizar_animacion()
+	_update_animation()
 	move_and_slide()
 	area_ataque.position.x = -21 if anim.flip_h else 21
 
-func _aplicar_gravedad(delta):
+
+func _apply_gravity(delta):
 	if not is_on_floor():
-		velocity.y += gravedad * delta
-		velocity.y = min(velocity.y, max_caida)
+		velocity.y += gravity * delta
+		velocity.y = min(velocity.y, max_fall)
 	else:
 		velocity.y = 0
 
-func _detectar_aterrizaje():
+
+func _detect_landing():
 	if not is_on_floor():
-		estaba_en_el_aire = true
+		was_in_air = true
 	else:
-		if estaba_en_el_aire and not aterrizo_recientemente and not atacando:
-			_reproducir_aterrizaje()
-		estaba_en_el_aire = false
+		if was_in_air and not landed_recently and not attacking:
+			_play_landing()
+		was_in_air = false
 
-func _aplicar_movimiento_horizontal():
-	if direccion_movimiento != 0:
-		velocity.x = direccion_movimiento * VELOCIDAD
-		anim.flip_h = direccion_movimiento < 0
+
+func _apply_horizontal_movement():
+	if move_direction != 0:
+		velocity.x = move_direction * SPEED
+		anim.flip_h = move_direction < 0
 	else:
-		velocity.x = move_toward(velocity.x, 0, VELOCIDAD * 20 * get_physics_process_delta_time())
+		velocity.x = move_toward(velocity.x, 0, SPEED * 20 * get_physics_process_delta_time())
 
-func _actualizar_animacion():
-	if atacando or aterrizo_recientemente:
+
+func _update_animation():
+	if attacking or landed_recently:
 		return
 	if not is_on_floor():
 		anim.play("jump" if velocity.y < 0 else "fall")
-	elif direccion_movimiento != 0:
+	elif move_direction != 0:
 		anim.play("run")
 	else:
 		anim.play("idle")
 
-func agregar_moneda(cantidad: int):
+
+func add_coin(amount: int):
 	var hud = get_tree().get_first_node_in_group("hud")
-	if hud: hud.añadir_moneda(1)
-	recoger_moneda.play()
-	monedas += cantidad
+	if hud: hud.add_coin(1)
+	coin_sfx.play()
+	coins += amount
 
 
 ## Handle damage with invulnerability frames and knockback
-func recibir_dano(cantidad: int = 1):
-	if muerto or invulnerable:
+func take_damage(amount: int = 1):
+	if dead or invulnerable:
 		return
-	recibiendo_daño = true
+	taking_damage = true
 	invulnerable = true
-	atacando = true
+	attacking = true
 	anim.play("hit")
 
-	vida -= cantidad
+	hp -= amount
 
 	var hud = get_tree().get_first_node_in_group("hud")
-	if hud and hud.has_method("actualizar_vida"):
-		hud.call_deferred("actualizar_vida", vida)
+	if hud and hud.has_method("update_health"):
+		hud.call_deferred("update_health", hp)
 
-	if vida <= 0:
-		_morir()
+	if hp <= 0:
+		_die()
 		return
 
 	hit.play()
 	var dir = 1 if anim.flip_h else -1
-	velocity = Vector2(dir * IMPULSO_RETROCESO_DAÑO, -100)
+	velocity = Vector2(dir * DAMAGE_KNOCKBACK_IMPULSE, -100)
 
 	for i in range(10):
 		move_and_slide()
@@ -135,83 +140,85 @@ func recibir_dano(cantidad: int = 1):
 
 	velocity = Vector2.ZERO
 	await anim.animation_finished
-	atacando = false
+	attacking = false
 	invulnerable = false
-	recibiendo_daño = false
+	taking_damage = false
 	await get_tree().create_timer(1.0).timeout
 
 
 ## Death sequence
-func _morir():
-	musica.stop()
-	morir.play()
-	muerto = true
+func _die():
+	music.stop()
+	die_sfx.play()
+	dead = true
 	anim.play("dead")
 	velocity.x = 0
 	Global.score_nivel1 = 0
 	Global.score_nivel2 = 0
 	Global.score_nivel3 = 0
 	var death = get_tree().get_first_node_in_group("death_screen")
-	if death: death.mostrar_pantalla_muerte()
+	if death: death.show_death_screen()
 	var hud = get_tree().get_first_node_in_group("hud")
-	if hud: hud.actualizar_muertes()
+	if hud: hud.update_deaths()
 
 
 ## Attack with hit detection and cooldown
-func _atacar():
-	if recibiendo_daño:
+func _attack():
+	if taking_damage:
 		return
-	atacando = true
-	puede_atacar = false
+	attacking = true
+	can_attack = false
 	anim.play("attack")
 	hachazo.play()
 	velocity = Vector2.ZERO
 	area_ataque.set_deferred("monitoring", true)
 	area_ataque.set_deferred("monitorable", true)
 	await get_tree().create_timer(0.1).timeout
-	var cuerpos = area_ataque.get_overlapping_bodies()
+	var bodies = area_ataque.get_overlapping_bodies()
 
-	if cuerpos.size() > 0:
-		var golpeo_enemigo = false
-		for cuerpo in cuerpos:
-			if cuerpo != self and cuerpo.has_method("recibir_dano"):
-				cuerpo.recibir_dano(1)
-				_aplicar_retroceso()
-				golpeo_enemigo = true
+	if bodies.size() > 0:
+		var hit_enemy = false
+		for body in bodies:
+			if body != self and body.has_method("take_damage"):
+				body.take_damage(1)
+				_apply_knockback()
+				hit_enemy = true
 				break
-		if not golpeo_enemigo:
-			_aplicar_retroceso()
+		if not hit_enemy:
+			_apply_knockback()
 
 	area_ataque.monitoring = false
 	area_ataque.monitorable = false
 	await anim.animation_finished
-	atacando = false
-	await get_tree().create_timer(COOLDOWN_ATAQUE).timeout
-	puede_atacar = true
+	attacking = false
+	await get_tree().create_timer(ATTACK_COOLDOWN).timeout
+	can_attack = true
 
-func _reproducir_aterrizaje():
-	aterrizo_recientemente = true
+
+func _play_landing():
+	landed_recently = true
 	anim.play("ground")
 	await anim.animation_finished
-	aterrizo_recientemente = false
+	landed_recently = false
 
-func _aplicar_retroceso():
-	var direccion = -1 if anim.flip_h else 1
-	velocity.x = direccion * -IMPULSO_RETROCESO
+
+func _apply_knockback():
+	var direction = -1 if anim.flip_h else 1
+	velocity.x = direction * -KNOCKBACK_IMPULSE
 
 
 ## Lifecycle
 func _ready():
 	add_to_group("player")
-	if GameManager.partida.size() > 0 and not GameManager.carga_aplicada:
+	if GameManager.save_data.size() > 0 and not GameManager.load_applied:
 		global_position = Vector2(
-			GameManager.partida.get("pos_x", global_position.x),
-			GameManager.partida.get("pos_y", global_position.y)
+			GameManager.save_data.get("pos_x", global_position.x),
+			GameManager.save_data.get("pos_y", global_position.y)
 		)
-		GameManager.carga_aplicada = true
+		GameManager.load_applied = true
 
-	musica.play()
-	en_secuencia_puerta = true
+	music.play()
+	in_door_sequence = true
 	anim.play("door_out")
 	await anim.animation_finished
-	en_secuencia_puerta = false
+	in_door_sequence = false

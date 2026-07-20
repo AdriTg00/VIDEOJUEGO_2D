@@ -1,4 +1,4 @@
-## pinchos.gd — Spikes hazard with damage-over-time
+## pinchos — Spikes hazard with damage-over-time
 
 extends Area2D
 
@@ -6,6 +6,7 @@ extends Area2D
 @export var interval: float = 0.5
 
 var players_in_area: Array = []
+
 
 ## Lifecycle
 func _ready():
@@ -18,17 +19,20 @@ func _ready():
 	add_child(timer)
 	timer.timeout.connect(_apply_damage)
 
+
 func _on_body_entered(body):
 	if body.name == "Rey":
 		players_in_area.append(body)
 		print("Jugador entró a los pinchos")
 
+
 func _on_body_exited(body):
 	if body in players_in_area:
 		players_in_area.erase(body)
 
+
 ## Applies damage to all players in the hazard area
 func _apply_damage():
 	for player in players_in_area:
-		if player and player.has_method("recibir_dano"):
-			player.recibir_dano(damage_per_second)
+		if player and player.has_method("take_damage"):
+			player.take_damage(damage_per_second)

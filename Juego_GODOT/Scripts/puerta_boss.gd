@@ -1,11 +1,12 @@
-## puerta_boss.gd — Boss door with drop animation
+## boss_door — Boss door with drop animation
 
 extends Node2D
 
-@export var distancia_bajada := 70.0
-@export var tiempo_bajada := 1.5
+@export var drop_distance := 70.0
+@export var drop_time := 1.5
+
 
 ## Lowers the door using a tween
-func bajar():
+func lower():
 	var tween = get_tree().create_tween()
-	tween.tween_property(self, "position:y", position.y + distancia_bajada, tiempo_bajada)
+	tween.tween_property(self, "position:y", position.y + drop_distance, drop_time)

@@ -1,25 +1,27 @@
-## puerta_salida_2.gd — Second exit door with level transition
+## exit_door_2 — Second exit door with level transition
 
 extends Node2D
 
 @onready var anim = $StaticBody2D/AnimatedSprite2D
 
-signal jugador_entro_puerta_2do_nivel
+signal player_entered_door_level2
+
 
 func _on_Area2D_body_entered(body):
 	if body.name == "Rey":
 		print('Jugador entro a la puerta')
-		entrar_nivel(body)
+		_enter_level(body)
+
 
 ## Handles player entrance animation and emits transition signal
-func entrar_nivel(jugador):
+func _enter_level(player):
 	anim.play("open")
-	jugador.bloqueado = true
-	jugador.velocity = Vector2.ZERO
-	jugador.set_process_input(false)
+	player.locked = true
+	player.velocity = Vector2.ZERO
+	player.set_process_input(false)
 	await anim.animation_finished
-	var animacion_jugador = jugador.get_node("AnimatedSprite2D")
-	animacion_jugador.play("door_in")
-	await animacion_jugador.animation_finished
+	var player_anim = player.get_node("AnimatedSprite2D")
+	player_anim.play("door_in")
+	await player_anim.animation_finished
 
-	emit_signal("jugador_entro_puerta_2do_nivel")
+	emit_signal("player_entered_door_level2")

@@ -1,37 +1,37 @@
-## enemigo.gd — Base enemy with patrol, chase, jump, and damage
+## enemigo — Base enemy with patrol, chase, jump, and damage
 
 extends CharacterBody2D
 
 @onready var anim = $AnimatedSprite2D
 @onready var detector_area = $Area2D
-@onready var gruñido = $"gruñido_cerdo"
+@onready var grunt = $"gruñido_cerdo"
 
-@export var margen_colision: float = 20.0
-@export var velocidad: float = 50.0
-@export var gravedad: float = 1200.0
-@export var max_caida: float = 1000.0
-@export var rango_persecucion: float = 250.0
-@export var tiempo_idle_colision: float = 1.0
+@export var collision_margin: float = 20.0
+@export var speed: float = 50.0
+@export var gravity: float = 1200.0
+@export var max_fall: float = 1000.0
+@export var chase_range: float = 250.0
+@export var collision_idle_time: float = 1.0
 
-@export var salto_habilitado := true
-@export var dist_precipicio := 20.0
-@export var dist_pared := 16.0
-@export var altura_rayo_suelo := 28.0
-@export var debug_rayos := false
+@export var jump_enabled := true
+@export var cliff_distance := 20.0
+@export var wall_distance := 16.0
+@export var ground_ray_height := 28.0
+@export var debug_rays := false
 
-var jugador: CharacterBody2D = null
-var muerto := false
-var recibiendo_daño := false
-var direccion := 1
-var en_persecucion := false
-var patrullando := false
-var cancelando_patruya := false
-var en_pausa_colision := false
+var player: CharacterBody2D = null
+var dead := false
+var taking_damage := false
+var direction := 1
+var is_chasing := false
+var is_patrolling := false
+var cancel_patrol := false
+var collision_paused := false
 var invulnerable := false
-var vida = 5
-var _saltando := false
+var hp = 5
+var _jumping := false
 
-const IMPULSO_SALTO = -400.0
+const JUMP_IMPULSE = -400.0
 
 var _cliff_ray: RayCast2D
 var _wall_ray: RayCast2D
@@ -51,55 +51,59 @@ func _ready():
 	_wall_ray.collision_mask = 1
 	add_child(_wall_ray)
 
-	detector_area.body_entered.connect(_on_jugador_entro)
-	detector_area.body_exited.connect(_on_jugador_salio)
-	_iniciar_patruya()
+	detector_area.body_entered.connect(_on_player_entered)
+	detector_area.body_exited.connect(_on_player_exited)
+	_start_patrol()
 
 
 ## Physics
 func _physics_process(delta):
-	if muerto:
+	if dead:
 		return
-	_aplicar_gravedad(delta)
+	_apply_gravity(delta)
 
-	if recibiendo_daño:
+	if taking_damage:
 		move_and_slide()
 		return
 
-	_actualizar_dir_rayos()
+	_update_ray_directions()
 
-	if en_persecucion and jugador and not en_pausa_colision:
-		_perseguir_jugador()
-	elif not patrullando and not en_pausa_colision:
-		_iniciar_patruya()
+	if is_chasing and player and not collision_paused:
+		_chase_player()
+	elif not is_patrolling and not collision_paused:
+		_start_patrol()
 
-	if is_on_floor() and _debe_saltar():
-		_saltar()
+	if is_on_floor() and _should_jump():
+		_jump()
 
 	move_and_slide()
 
-func _aplicar_gravedad(delta):
+
+func _apply_gravity(delta):
 	if not is_on_floor():
-		velocity.y += gravedad * delta
-		velocity.y = min(velocity.y, max_caida)
+		velocity.y += gravity * delta
+		velocity.y = min(velocity.y, max_fall)
 	else:
 		velocity.y = 0
-		_saltando = false
+		_jumping = false
+
 
 func _get_facing_dir() -> int:
 	return 1 if anim.flip_h else -1
 
-func _actualizar_dir_rayos():
+
+func _update_ray_directions():
 	var dir = _get_facing_dir()
-	_cliff_ray.target_position = Vector2(dir * dist_precipicio, altura_rayo_suelo)
-	_wall_ray.target_position = Vector2(dir * dist_pared, -4)
+	_cliff_ray.target_position = Vector2(dir * cliff_distance, ground_ray_height)
+	_wall_ray.target_position = Vector2(dir * wall_distance, -4)
 	_cliff_ray.force_raycast_update()
 	_wall_ray.force_raycast_update()
-	if debug_rayos:
+	if debug_rays:
 		queue_redraw()
 
+
 func _draw():
-	if not debug_rayos:
+	if not debug_rays:
 		return
 	var dir = _get_facing_dir()
 	var cliff_end = _cliff_ray.target_position
@@ -113,103 +117,108 @@ func _draw():
 	draw_line(Vector2.ZERO, cliff_end, cliff_color, 1.0)
 	draw_line(Vector2.ZERO, wall_end, wall_color, 1.0)
 
-func _debe_saltar() -> bool:
-	if not salto_habilitado or _saltando:
+
+func _should_jump() -> bool:
+	if not jump_enabled or _jumping:
 		return false
 	var col = _wall_ray.get_collider()
 	if col and col.is_in_group("player"):
 		return false
 	return _wall_ray.is_colliding()
 
-func _saltar():
-	_saltando = true
-	velocity.y = IMPULSO_SALTO
+
+func _jump():
+	_jumping = true
+	velocity.y = JUMP_IMPULSE
 	anim.play("jump")
 
 
 ## Chase player within range
-func _perseguir_jugador():
-	var dist = global_position.distance_to(jugador.global_position)
-	if dist > rango_persecucion:
-		en_persecucion = false
-		_iniciar_patruya()
+func _chase_player():
+	var dist = global_position.distance_to(player.global_position)
+	if dist > chase_range:
+		is_chasing = false
+		_start_patrol()
 		return
 
-	var dir = sign(jugador.global_position.x - global_position.x)
-	velocity.x = dir * velocidad
+	var dir = sign(player.global_position.x - global_position.x)
+	velocity.x = dir * speed
 	anim.flip_h = dir > 0
 	anim.play("run")
 
-	if _colisiona_con_jugador():
-		if recibiendo_daño:
+	if _collides_with_player():
+		if taking_damage:
 			return
-		if jugador and jugador.has_method("recibir_dano"):
-			jugador.recibir_dano(1)
-		await _pausa_idle_colision()
+		if player and player.has_method("take_damage"):
+			player.take_damage(1)
+		await _pause_collision_idle()
 
-func _colisiona_con_jugador() -> bool:
-	if jugador:
-		var dx = abs(global_position.x - jugador.global_position.x)
-		var dy = abs(global_position.y - jugador.global_position.y)
-		return dx < margen_colision and dy < margen_colision
+
+func _collides_with_player() -> bool:
+	if player:
+		var dx = abs(global_position.x - player.global_position.x)
+		var dy = abs(global_position.y - player.global_position.y)
+		return dx < collision_margin and dy < collision_margin
 	return false
 
-func _pausa_idle_colision():
-	if recibiendo_daño:
-		return
-	en_pausa_colision = true
-	velocity.x = 0
-	await get_tree().create_timer(tiempo_idle_colision).timeout
-	en_pausa_colision = false
 
-func _iniciar_patruya():
-	gruñido.stop()
-	patrullando = true
+func _pause_collision_idle():
+	if taking_damage:
+		return
+	collision_paused = true
+	velocity.x = 0
+	await get_tree().create_timer(collision_idle_time).timeout
+	collision_paused = false
+
+
+func _start_patrol():
+	grunt.stop()
+	is_patrolling = true
 	_patrol_loop()
 
 
 ## Handle damage with hit animation and knockback
-func recibir_dano(cantidad: int = 1):
-	if muerto or invulnerable:
+func take_damage(amount: int = 1):
+	if dead or invulnerable:
 		return
-	recibiendo_daño = true
-	vida -= cantidad
-	if vida <= 0:
-		_morir()
+	taking_damage = true
+	hp -= amount
+	if hp <= 0:
+		_die()
 		return
 	invulnerable = true
 	anim.play("hit")
-	var dir_retroceso = sign(global_position.x - jugador.global_position.x)
+	var dir_retroceso = sign(global_position.x - player.global_position.x)
 	velocity.x = dir_retroceso * 50
 	move_and_slide()
 	await anim.animation_finished
-	en_persecucion = true
-	recibiendo_daño = false
+	is_chasing = true
+	taking_damage = false
 	invulnerable = false
 
 
 ## Patrol back and forth
 func _patrol_loop():
 	await get_tree().process_frame
-	while not muerto and not en_persecucion:
+	while not dead and not is_chasing:
 		anim.play("run")
-		velocity.x = direccion * velocidad
-		anim.flip_h = direccion > 0
+		velocity.x = direction * speed
+		anim.flip_h = direction > 0
 		await get_tree().create_timer(1.0).timeout
 		anim.play("idle")
 		velocity.x = 0
 		await get_tree().create_timer(2.0).timeout
-		direccion *= -1
-	patrullando = false
+		direction *= -1
+	is_patrolling = false
 
 
 ## Death sequence
-func _morir():
-	muerto = true
-	en_persecucion = false
-	patrullando = false
+func _die():
+	dead = true
+	is_chasing = false
+	is_patrolling = false
 	var hud = get_tree().get_first_node_in_group("hud")
-	if hud: hud.añadir_moneda(3)
+	if hud: hud.add_coin(3)
 	velocity = Vector2.ZERO
 	set_collision_layer_value(1, false)
 	set_collision_mask_value(1, false)
@@ -217,15 +226,17 @@ func _morir():
 	await anim.animation_finished
 	queue_free()
 
-func _on_jugador_entro(cuerpo):
-	if cuerpo.name == "Rey":
-		gruñido.play()
-		jugador = cuerpo
-		en_persecucion = true
 
-func _on_jugador_salio(cuerpo):
-	if recibiendo_daño:
+func _on_player_entered(body):
+	if body.name == "Rey":
+		grunt.play()
+		player = body
+		is_chasing = true
+
+
+func _on_player_exited(body):
+	if taking_damage:
 		return
-	if cuerpo == jugador:
-		jugador = null
-		en_persecucion = false
+	if body == player:
+		player = null
+		is_chasing = false

@@ -1,7 +1,8 @@
 ## global — Global game state (times, scores, deaths, level, reset)
+
 extends Node
 
-var jugador_id: String = ""
+var player_id: String = ""
 
 var death_count := 0
 
@@ -15,11 +16,14 @@ var score_nivel1 := 0
 var score_nivel2 := 0
 var score_nivel3 := 0
 
-func get_tiempo_total() -> float:
+
+func get_total_time() -> float:
 	return tiempo_total_nivel1 + tiempo_total_nivel2 + tiempo_total_nivel3
 
-func get_puntuacion_total() -> int:
+
+func get_total_score() -> int:
 	return score_nivel1 + score_nivel2 + score_nivel3
+
 
 ## Reset state on death
 func reset_game_death():
@@ -34,6 +38,7 @@ func reset_game_death():
 	score_nivel3 = 0
 
 	nivel = 1
+
 
 ## Full game reset
 func reset_game():

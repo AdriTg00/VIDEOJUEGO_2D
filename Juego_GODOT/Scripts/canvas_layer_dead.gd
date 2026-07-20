@@ -1,11 +1,13 @@
 ## canvas_layer_dead — Death screen overlay with retry and load options
+
 extends CanvasLayer
 
 @onready var color_rect = $ColorRect
 @onready var label = $VBoxContainer/Label
-@onready var boton_retry = $VBoxContainer/Button
+@onready var retry_btn = $VBoxContainer/Button
 
-var _btn_cargar: Button
+var _load_btn: Button
+
 
 ## Lifecycle
 func _ready():
@@ -13,35 +15,38 @@ func _ready():
 	self.visible = false
 	color_rect.modulate.a = 0.0
 	label.modulate.a = 0.0
-	boton_retry.modulate.a = 0.0
+	retry_btn.modulate.a = 0.0
 
-	boton_retry.pressed.connect(_on_retry_pressed)
+	retry_btn.pressed.connect(_on_retry_pressed)
 
-	_btn_cargar = Button.new()
-	_btn_cargar.text = "Cargar partida"
-	_btn_cargar.modulate.a = 0.0
-	_btn_cargar.pressed.connect(_on_cargar_pressed)
-	$VBoxContainer.add_child(_btn_cargar)
+	_load_btn = Button.new()
+	_load_btn.text = "Cargar partida"
+	_load_btn.modulate.a = 0.0
+	_load_btn.pressed.connect(_on_load_pressed)
+	$VBoxContainer.add_child(_load_btn)
 
-func mostrar_pantalla_muerte():
+
+func show_death_screen():
 	self.visible = true
 	var tween = get_tree().create_tween()
 	tween.tween_property(color_rect, "modulate:a", 0.7, 1.0)
 	tween.tween_property(label, "modulate:a", 1.0, 0.8)
-	tween.tween_property(boton_retry, "modulate:a", 1.0, 0.8)
-	tween.tween_property(_btn_cargar, "modulate:a", 1.0, 0.8)
+	tween.tween_property(retry_btn, "modulate:a", 1.0, 0.8)
+	tween.tween_property(_load_btn, "modulate:a", 1.0, 0.8)
+
 
 func _on_retry_pressed():
 	Global.reset_game_death()
 	get_tree().change_scene_to_file("res://Escenas/primer_nivel.tscn")
 
-func _on_cargar_pressed():
-	var data := _cargar_local_save()
+
+func _on_load_pressed():
+	var data := _load_local_save()
 	if data.is_empty():
 		return
 
 	Global.reset_game_death()
-	GameManager.aplicar_partida(data)
+	GameManager.apply_save_data(data)
 
 	var nivel := Global.nivel
 	var path := "res://Escenas/primer_nivel.tscn"
@@ -51,8 +56,9 @@ func _on_cargar_pressed():
 
 	get_tree().change_scene_to_file(path)
 
+
 ## Load save file from disk
-func _cargar_local_save() -> Dictionary:
+func _load_local_save() -> Dictionary:
 	if not FileAccess.file_exists("user://partida_local.json"):
 		return {}
 	var file := FileAccess.open("user://partida_local.json", FileAccess.READ)

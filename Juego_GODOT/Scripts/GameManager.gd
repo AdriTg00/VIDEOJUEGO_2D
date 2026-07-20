@@ -1,62 +1,66 @@
 ## GameManager — Save/load orchestration and end-game stats submission
+
 extends Node
 
-var partida := {}
-var fin_ejecutado := false
-var carga_aplicada := false
-var partida_cargada := false
+var save_data := {}
+var finished := false
+var load_applied := false
+var save_loaded := false
+
 
 ## Apply saved data to global state
-func aplicar_partida(partida_data: Dictionary):
-	partida = partida_data
-	carga_aplicada = false
-	fin_ejecutado = false
+func apply_save_data(data: Dictionary):
+	save_data = data
+	load_applied = false
+	finished = false
 
-	Global.nivel = int(partida.get("nivel", 1))
-	Global.death_count = int(partida.get("muertes_nivel", 0))
+	Global.nivel = int(data.get("nivel", 1))
+	Global.death_count = int(data.get("muertes_nivel", 0))
 
-	Global.tiempo_total_nivel1 = float(partida.get("tiempo", 0))
+	Global.tiempo_total_nivel1 = float(data.get("tiempo", 0))
 	Global.tiempo_total_nivel2 = 0
 	Global.tiempo_total_nivel3 = 0
 
-	Global.score_nivel1 = int(partida.get("puntuacion", 0))
+	Global.score_nivel1 = int(data.get("puntuacion", 0))
 	Global.score_nivel2 = 0
 	Global.score_nivel3 = 0
 
+
 ## Submit final stats to server
-func fin_de_juego():
-	print("DEBUG | fin_de_juego() llamado")
+func end_game():
+	print("DEBUG | end_game() llamado")
 
-	if fin_ejecutado:
+	if finished:
 		return
-	fin_ejecutado = true
+	finished = true
 
-	if Global.jugador_id == "":
-		push_error("FIN DE JUEGO | jugador_id vacío, abortando envío")
+	if Global.player_id == "":
+		push_error("FIN DE JUEGO | player_id vacío, abortando envío")
 		return
 
-	var datos = {
-		"jugador_id": Global.jugador_id,
-		"tiempo_total": Global.get_tiempo_total(),
-		"puntuacion_total": Global.get_puntuacion_total(),
+	var stats = {
+		"jugador_id": Global.player_id,
+		"tiempo_total": Global.get_total_time(),
+		"puntuacion_total": Global.get_total_score(),
 		"niveles_superados": Global.nivel
 	}
 
-	print("FIN DE JUEGO | Enviando estadisticas:", datos)
-	_enviar_estadisticas_jugador(datos)
+	print("FIN DE JUEGO | Enviando estadisticas:", stats)
+	_send_player_stats(stats)
+
 
 ## Send stats via HTTP
-func _enviar_estadisticas_jugador(datos: Dictionary):
+func _send_player_stats(data: Dictionary):
 	print("HTTP | Preparando envío de estadísticas")
 
 	var http := HTTPRequest.new()
 	http.name = "HTTPRequest_Estadisticas"
 	get_tree().root.add_child(http)
 
-	http.request_completed.connect(_on_estadisticas_enviadas)
+	http.request_completed.connect(_on_stats_sent)
 
 	var headers = ["Content-Type: application/json"]
-	var body = JSON.stringify(datos)
+	var body = JSON.stringify(data)
 
 	var err = http.request(
 		"https://flask-server-9ymz.onrender.com/jugadores/estadisticas",
@@ -68,7 +72,8 @@ func _enviar_estadisticas_jugador(datos: Dictionary):
 	if err != OK:
 		push_error("HTTP | Error al lanzar request: %s" % err)
 
-func _on_estadisticas_enviadas(result, response_code, headers, body):
+
+func _on_stats_sent(result, response_code, headers, body):
 	var text = body.get_string_from_utf8()
 	print("API RESPUESTA | código:", response_code)
 	print("API RESPUESTA | body:", text)

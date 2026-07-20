@@ -1,10 +1,12 @@
-## paso_nivel_2.gd — Level 2 transition handler
+## level_transition_2 — Level 2 transition handler
 
 extends Node2D
 
+
 ## Lifecycle
 func _ready():
-	$puerta_salida.jugador_entro_puerta.connect(_on_puerta_jugador_entro)
+	$puerta_salida.player_entered_door.connect(_on_player_entered_door)
 
-func _on_puerta_jugador_entro():
+
+func _on_player_entered_door():
 	get_tree().change_scene_to_file("res://Escenas/segundo_nivel.tscn")

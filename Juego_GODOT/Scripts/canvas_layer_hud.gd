@@ -1,4 +1,5 @@
 ## canvas_layer_hud — HUD overlay with score, timer, death counter, and camera-follow
+
 extends CanvasLayer
 
 @onready var score_label = $ScoreLabel
@@ -7,122 +8,135 @@ extends CanvasLayer
 @onready var death_label = $death
 
 @export var hud_offset := Vector2(-500, -250)
-@export var suavizado := true
-@export var velocidad_suavizado := 5.0
-@export var nivel_actual := 1
+@export var smooth := true
+@export var smooth_speed := 5.0
+@export var current_level := 1
 
-var camara_actual: Camera2D = null
+var current_camera: Camera2D = null
 var running := false
-var _tiempo_key := "tiempo_total_nivel1"
+var _time_key := "tiempo_total_nivel1"
 var _score_key := "score_nivel1"
+
 
 ## Lifecycle
 func _ready():
 	add_to_group("hud")
-	match nivel_actual:
+	match current_level:
 		1:
-			_tiempo_key = "tiempo_total_nivel1"
+			_time_key = "tiempo_total_nivel1"
 			_score_key = "score_nivel1"
 		2:
-			_tiempo_key = "tiempo_total_nivel2"
+			_time_key = "tiempo_total_nivel2"
 			_score_key = "score_nivel2"
 		3:
-			_tiempo_key = "tiempo_total_nivel3"
+			_time_key = "tiempo_total_nivel3"
 			_score_key = "score_nivel3"
 
-	Global.nivel = nivel_actual
+	Global.nivel = current_level
 	_start_timer()
 	death_label.text = "DEATHS: " + str(Global.death_count)
-	level_section.text = "LEVEL " + str(nivel_actual)
+	level_section.text = "LEVEL " + str(current_level)
 	score_label.text = "Score: " + str(Global.get(_score_key))
 
-	for nodo in get_children():
-		if nodo is AnimatedSprite2D:
-			nodo.play("idle")
+	for node in get_children():
+		if node is AnimatedSprite2D:
+			node.play("idle")
 
-	_actualizar_camara()
+	_update_camera()
 	get_tree().node_added.connect(_on_node_added)
+
 
 func _start_timer():
 	running = true
 
+
 func stop_timer():
 	running = false
 
+
 func _update_timer_label():
-	var t = Global.get(_tiempo_key)
+	var t = Global.get(_time_key)
 	var minutes = int(t / 60)
 	var seconds = int(t) % 60
 	timer_label.text = "%02d:%02d" % [minutes, seconds]
 
+
 func get_elapsed_ms() -> int:
-	return int(round(Global.get(_tiempo_key) * 1000.0))
+	return int(round(Global.get(_time_key) * 1000.0))
+
 
 func get_elapsed_text() -> String:
-	var t = Global.get(_tiempo_key)
+	var t = Global.get(_time_key)
 	var minutes = int(t / 60)
 	var seconds = int(t) % 60
 	return "%02d:%02d" % [minutes, seconds]
 
-func añadir_moneda(amount: int):
+
+func add_coin(amount: int):
 	var current = Global.get(_score_key)
 	Global.set(_score_key, current + amount)
 	score_label.text = "Score: " + str(Global.get(_score_key))
 
+
 ## Physics
 func _process(delta: float):
 	if running:
-		var current = Global.get(_tiempo_key)
-		Global.set(_tiempo_key, current + delta)
+		var current = Global.get(_time_key)
+		Global.set(_time_key, current + delta)
 		_update_timer_label()
 
-	if not camara_actual:
-		_actualizar_camara()
+	if not current_camera:
+		_update_camera()
 		return
 
-	var destino = camara_actual.get_screen_center_position() + hud_offset
-	if suavizado:
-		transform.origin = transform.origin.lerp(destino, delta * velocidad_suavizado)
+	var target = current_camera.get_screen_center_position() + hud_offset
+	if smooth:
+		transform.origin = transform.origin.lerp(target, delta * smooth_speed)
 	else:
-		transform.origin = destino
+		transform.origin = target
+
 
 ## Health — animate and remove hearts
-func actualizar_vida(nueva_vida: int):
-	var corazones := []
-	for nodo in get_children():
-		if nodo is AnimatedSprite2D:
-			corazones.append(nodo)
+func update_health(new_hp: int):
+	var hearts := []
+	for node in get_children():
+		if node is AnimatedSprite2D:
+			hearts.append(node)
 
-	var vida_actual := corazones.size()
+	var current_hp := hearts.size()
 
-	if nueva_vida < vida_actual:
-		var perder = vida_actual - nueva_vida
-		for i in range(perder):
-			await _romper_corazon(corazones[i])
+	if new_hp < current_hp:
+		var lose = current_hp - new_hp
+		for i in range(lose):
+			await _break_heart(hearts[i])
 
-func actualizar_muertes():
+
+func update_deaths():
 	Global.death_count += 1
 	death_label.text = "DEATHS: " + str(Global.death_count)
 
-func _romper_corazon(corazon: AnimatedSprite2D):
-	if not corazon.visible:
+
+func _break_heart(heart: AnimatedSprite2D):
+	if not heart.visible:
 		return
-	corazon.play("hit")
-	await corazon.animation_finished
-	corazon.visible = false
+	heart.play("hit")
+	await heart.animation_finished
+	heart.visible = false
 
-func _on_node_added(nodo):
-	if nodo is Camera2D and nodo.is_current():
-		camara_actual = nodo
 
-func _actualizar_camara():
-	var camaras = get_tree().get_nodes_in_group("camaras")
-	for c in camaras:
+func _on_node_added(node):
+	if node is Camera2D and node.is_current():
+		current_camera = node
+
+
+func _update_camera():
+	var cameras = get_tree().get_nodes_in_group("camaras")
+	for c in cameras:
 		if c.is_current():
-			camara_actual = c
+			current_camera = c
 			return
 
-	for nodo in get_tree().root.get_children():
-		if nodo is Camera2D and nodo.is_current():
-			camara_actual = nodo
+	for node in get_tree().root.get_children():
+		if node is Camera2D and node.is_current():
+			current_camera = node
 			return

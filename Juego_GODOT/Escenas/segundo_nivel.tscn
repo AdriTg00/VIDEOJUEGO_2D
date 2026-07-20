@@ -641,12 +641,12 @@ position = Vector2(1993, 343)
 [node name="enemigo" parent="enemigos2_0" instance=ExtResource("10_qvf3y")]
 position = Vector2(474, -4)
 script = ExtResource("11_hcc8u")
-velocidad = 90.0
+speed = 90.0
 
 [node name="enemigo2" parent="enemigos2_0" instance=ExtResource("10_qvf3y")]
 position = Vector2(602, 236)
 script = ExtResource("11_hcc8u")
-velocidad = 90.0
+speed = 90.0
 
 [node name="enemigo_bomba" parent="enemigos2_0" instance=ExtResource("12_hcc8u")]
 position = Vector2(878, 654)

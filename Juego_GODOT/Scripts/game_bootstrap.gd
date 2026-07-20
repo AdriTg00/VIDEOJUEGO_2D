@@ -1,24 +1,26 @@
 ## game_bootstrap — Boot sequence: load save, determine level, navigate
+
 extends Node
+
 
 ## Lifecycle
 func _ready():
 	print("BOOTSTRAP | Ready")
 
-	while not LaunchToken.listo:
+	while not LaunchToken.ready_flag:
 		await get_tree().process_frame
 
-	print("BOOTSTRAP | LaunchToken listo")
-	print("BOOTSTRAP | load_partida:", LaunchToken.load_partida)
+	print("BOOTSTRAP | LaunchToken ready")
+	print("BOOTSTRAP | load_data:", LaunchToken.load_data)
 
-	if not LaunchToken.load_partida.is_empty():
+	if not LaunchToken.load_data.is_empty():
 		print("BOOTSTRAP | Aplicando partida desde launcher")
-		GameManager.aplicar_partida(LaunchToken.load_partida)
+		GameManager.apply_save_data(LaunchToken.load_data)
 	else:
-		var local_save := _cargar_local_save()
+		var local_save := _load_local_save()
 		if not local_save.is_empty():
 			print("BOOTSTRAP | Aplicando partida desde guardado local")
-			GameManager.aplicar_partida(local_save)
+			GameManager.apply_save_data(local_save)
 		else:
 			print("BOOTSTRAP | Nueva partida")
 
@@ -32,8 +34,9 @@ func _ready():
 
 	get_tree().change_scene_to_file(path)
 
+
 ## Load save file from disk
-func _cargar_local_save() -> Dictionary:
+func _load_local_save() -> Dictionary:
 	if not FileAccess.file_exists("user://partida_local.json"):
 		return {}
 	var file := FileAccess.open("user://partida_local.json", FileAccess.READ)

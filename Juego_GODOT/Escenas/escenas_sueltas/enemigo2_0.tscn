@@ -220,7 +220,7 @@ size = Vector2(391, 84)
 
 [node name="enemigo_bomba" type="CharacterBody2D"]
 script = ExtResource("1_yp6on")
-bomba_scene = ExtResource("2_rls4e")
+bomb_scene = ExtResource("2_rls4e")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_isp0j")
